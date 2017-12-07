@@ -1,2 +1,2 @@
 # lycee-sample
-sample java source
+sample source
