@@ -26,7 +26,7 @@ public class LyceeArgsProfileTest {
 	/**
 	 * <b>SampleEnum</b>
 	 * <p>
-	 * Šm”F—p—ñ‹“Œ^
+	 * ç¢ºèªç”¨åˆ—æŒ™å‹
 	 * </p>
 	 * @author ryouka
 	 *
@@ -41,114 +41,114 @@ public class LyceeArgsProfileTest {
 
 
 	/**
-	 * Œ^‚ÌŠm”F—pƒeƒXƒgƒNƒ‰ƒX
+	 * å‹ã®ç¢ºèªç”¨ãƒ†ã‚¹ãƒˆã‚¯ãƒ©ã‚¹
 	 * @author ryouka
 	 *
 	 */
 	public static class TypeTestClass {
 
-		/** •¶š—ñŒ^ */
+		/** æ–‡å­—åˆ—å‹ */
 		@LyceeArg
 		protected String argString;
 
-		/** ¬”Œ^ */
+		/** å°æ•°å‹ */
 		@LyceeArg
 		protected double argDouble;
 
-		/** ®”Œ^ */
+		/** æ•´æ•°å‹ */
 		@LyceeArg
 		protected long argLong;
 
-		/** “ú•tŒ^ */
+		/** æ—¥ä»˜å‹ */
 		@LyceeArg(dateFormat=LyceeDateFormat.SLASH_YYYY_MM_DD)
 		protected Date argDate;
 
-		/** —ñ‹“Œ^ */
+		/** åˆ—æŒ™å‹ */
 		@LyceeArg
 		protected SampleEnum argEnum;
 	}
 	/**
-	 * TypeTestClass‚ÌƒeƒXƒgƒf[ƒ^
+	 * TypeTestClassã®ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿
 	 */
 	private static final @Nonnull String[][] NORMAL_TEST_DATA = {
-			// ‘S•”‚ ‚è
+			// å…¨éƒ¨ã‚ã‚Š
 			{"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
-			// ÅŒã‚È‚µ
+			// æœ€å¾Œãªã—
 			, {"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01"}
-			// æ“ª‚È‚µ
+			// å…ˆé ­ãªã—
 			, {                      "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
-			// “r’†‚È‚µ
+			// é€”ä¸­ãªã—
 			, {"--argString", "abc",                        "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
-			// 1‚Â‚¾‚¯
+			// 1ã¤ã ã‘
 			, {"--argString", "abc" }
 	};
 
 	/**
-	 * ƒAƒNƒZƒbƒT‚ÌŠm”F—pƒeƒXƒgƒNƒ‰ƒX
+	 * ã‚¢ã‚¯ã‚»ãƒƒã‚µã®ç¢ºèªç”¨ãƒ†ã‚¹ãƒˆã‚¯ãƒ©ã‚¹
 	 * @author ryouka
 	 *
 	 */
 	public static class AccessTestClass {
-		/** ©“®İ’è‰Â”\ƒtƒB[ƒ‹ƒh */
+		/** è‡ªå‹•è¨­å®šå¯èƒ½ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ */
 		@LyceeArg
 		public String arg101;
 
-		/** ˆø”arg110w’è */
+		/** å¼•æ•°arg110æŒ‡å®š */
 		@LyceeArg(name="arg110")
 		protected String arg102;
 
-		/** ƒAƒNƒZƒX‚Å‚«‚È‚¢ƒtƒB[ƒ‹ƒh */
+		/** ã‚¢ã‚¯ã‚»ã‚¹ã§ããªã„ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ */
 		@LyceeArg
 		private String invalidField;
 	}
 
 	/**
-	 * AccessTestClass‚ÌƒeƒXƒgƒf[ƒ^
+	 * AccessTestClassã®ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿
 	 */
 	private static final @Nonnull String[][] ACCESSOR_TEST_DATA = {
-			// ³íŒn
+			// æ­£å¸¸ç³»
 			{"--arg101", "abc", "--arg110", "xyz",},
-			// –¼‘Ow’è‚·‚é‘O‚Ìƒpƒ^[ƒ“
+			// åå‰æŒ‡å®šã™ã‚‹å‰ã®ãƒ‘ã‚¿ãƒ¼ãƒ³
 			{"--arg101", "abc", "--arg102", "xyz",},
-			// –¼‘Ow’è‚Å2d‚É‹Lq
+			// åå‰æŒ‡å®šã§2é‡ã«è¨˜è¿°
 			{"--arg101", "abc", "--arg110", "xyz1", "--arg110", "xyz2",},
-			// –¼‘Ow’è‘O‚Å2d‚É‹Lq
+			// åå‰æŒ‡å®šå‰ã§2é‡ã«è¨˜è¿°
 			{"--arg101", "abc", "--arg102", "xyz1", "--arg102", "xyz2",},
-			// –¼‘Ow’è‘OŒã‚ğ2d‚É‹Lqi‡”ÔFw’èŒã->w’è‘Oj
+			// åå‰æŒ‡å®šå‰å¾Œã‚’2é‡ã«è¨˜è¿°ï¼ˆé †ç•ªï¼šæŒ‡å®šå¾Œ->æŒ‡å®šå‰ï¼‰
 			{"--arg101", "abc", "--arg110", "xyz1", "--arg102", "xyz2",},
-			// –¼‘Ow’è‘OŒã‚ğ2d‚É‹Lqi‡”ÔFw’è‘O->w’èŒãj
+			// åå‰æŒ‡å®šå‰å¾Œã‚’2é‡ã«è¨˜è¿°ï¼ˆé †ç•ªï¼šæŒ‡å®šå‰->æŒ‡å®šå¾Œï¼‰
 			{"--arg101", "abc", "--arg102", "xyz1", "--arg110", "xyz2",},
 	};
 
 	/**
-	 * ƒNƒ‰ƒXƒAƒmƒe[ƒVƒ‡ƒ“—pƒeƒXƒgƒNƒ‰ƒX
+	 * ã‚¯ãƒ©ã‚¹ã‚¢ãƒãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ç”¨ãƒ†ã‚¹ãƒˆã‚¯ãƒ©ã‚¹
 	 * @author ryouka
 	 *
 	 */
 	@LyceeArgClass
 	public static class AutoBindTestClass {
-		/** •¶š—ñŒ^ */
+		/** æ–‡å­—åˆ—å‹ */
 		protected String arg001;
 
-		/** •¶š—ñŒ^ */
+		/** æ–‡å­—åˆ—å‹ */
 		@LyceeArg(name="arg100")
 		protected String arg010;
 
-		/** ¬”Œ^ */
+		/** å°æ•°å‹ */
 		protected double arg002;
 
-		/** ®”Œ^ */
+		/** æ•´æ•°å‹ */
 		protected long arg003;
 
-		/** ®”Œ^(public) */
+		/** æ•´æ•°å‹(public) */
 		protected long arg004;
 
-		/** ®”Œ^(private) */
+		/** æ•´æ•°å‹(private) */
 		protected long arg005;
 	}
 
 	/**
-	 * AccessTestClass‚ÌƒeƒXƒgƒf[ƒ^
+	 * AccessTestClassã®ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿
 	 */
 	private static final @Nonnull String[][] AUTOBIND_TEST_DATA = {
 			{"--arg001", "abc", "--arg002", "3.14", "--arg003", "100", "--arg004", "200"},
@@ -164,6 +164,7 @@ public class LyceeArgsProfileTest {
 	 * @throws Exception
 	 */
 	@Test
+	@SuppressWarnings("null")
 	public void test_normal() throws Exception {
 		for(final @Nonnull String[] data : NORMAL_TEST_DATA) {
 			final LyceeArgsProfile profile = new LyceeArgsProfile();
@@ -182,6 +183,7 @@ public class LyceeArgsProfileTest {
 	 * @throws Exception
 	 */
 	@Test
+	@SuppressWarnings("null")
 	public void test_accessor() throws Exception {
 		for(final @Nonnull String[] data : ACCESSOR_TEST_DATA) {
 			final LyceeArgsProfile profile = new LyceeArgsProfile();
@@ -200,6 +202,7 @@ public class LyceeArgsProfileTest {
 	 * @throws Exception
 	 */
 	@Test
+	@SuppressWarnings("null")
 	public void test_autobind() throws Exception {
 		for(final @Nonnull String[] data : AUTOBIND_TEST_DATA) {
 			final LyceeArgsProfile profile = new LyceeArgsProfile();
@@ -212,7 +215,7 @@ public class LyceeArgsProfileTest {
 
 
 	// ==================================================================
-	// ŒŸØ—pƒeƒXƒgƒNƒ‰ƒX
+	// æ¤œè¨¼ç”¨ãƒ†ã‚¹ãƒˆã‚¯ãƒ©ã‚¹
 	//
 
 	//	@Test
@@ -261,7 +264,7 @@ public class LyceeArgsProfileTest {
 		System.out.println("sample: "+sample.sample);
 	}
 
-	//@Test
+	@Test
 	public void verify_test3() {
 		final int[] iAry = {1,2,3};
 		final String[] sAry = {"a", "B", "C"};
@@ -281,11 +284,11 @@ public class LyceeArgsProfileTest {
 
 	// =======================================================================
 	//
-	// ‰º¿‚¯ƒƒ\ƒbƒh
+	// ä¸‹è«‹ã‘ãƒ¡ã‚½ãƒƒãƒ‰
 	//
 
 	/**
-	 * <b>ƒNƒ‰ƒX‚Ìí—Ş‚ğŠm”F‚·‚éƒƒ\ƒbƒh</b>
+	 * <b>ã‚¯ãƒ©ã‚¹ã®ç¨®é¡ã‚’ç¢ºèªã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰</b>
 	 * <p>
 	 * </p>
 	 *
@@ -314,7 +317,7 @@ public class LyceeArgsProfileTest {
 	}
 
 	/**
-	 * Šm”F—pƒtƒB[ƒ‹ƒho—Íƒƒ\ƒbƒh
+	 * ç¢ºèªç”¨ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰å‡ºåŠ›ãƒ¡ã‚½ãƒƒãƒ‰
 	 * @param clazz
 	 * @param object
 	 */
@@ -336,7 +339,7 @@ public class LyceeArgsProfileTest {
 	}
 
 	/**
-	 * ƒAƒNƒZƒXCüq–¼‚É•ÏŠ·‚·‚éƒƒ\ƒbƒh
+	 * ã‚¢ã‚¯ã‚»ã‚¹ä¿®é£¾å­åã«å¤‰æ›ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰
 	 * @param mod
 	 * @return
 	 */
