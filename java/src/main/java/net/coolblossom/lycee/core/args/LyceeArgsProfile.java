@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,9 @@ import net.coolblossom.lycee.core.args.utils.ClassUtil;
  */
 public class LyceeArgsProfile {
 
+	/** keyとなる文字列のパターン */
+	private static final String DEFAULT_KEY_FORMAT_STRING = "^--?([A-Za-z_][A-Za-z0-9_]+)$";
+
 	public LyceeArgsProfile() {
 	}
 
@@ -40,7 +44,7 @@ public class LyceeArgsProfile {
 		try {
 			return bind(clazz.newInstance(), args);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new LyceeRuntimeException(e);
+			throw new LyceeRuntimeException("インスタンスの生成に失敗しました", e);
 		}
 	}
 
@@ -74,15 +78,20 @@ public class LyceeArgsProfile {
 		for(int ki = 0, vi=1 ; ki<args.length-1 ; ki++, vi++) {
 			final String key = args[ki];
 			final String value = args[vi];
-			boolean endBind = false;
+			// TODO: アノテーションから指定できるようにするとお手軽感が向上する
+			if( !Pattern.matches(DEFAULT_KEY_FORMAT_STRING, key) ) {
+				continue;
+			}
+
+			boolean finishFieldBound = false;
 			for(final FieldDescriptor desc : validField) {
 				if(desc.checkFieldName(key)) {
 					desc.bind(object, value);
-					endBind = true;
+					finishFieldBound = true;
 					break;
 				}
 			}
-			if(!endBind) {
+			if(!finishFieldBound) {
 				defaultField.bind(object, value);
 			}
 		}
