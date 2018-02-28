@@ -23,6 +23,7 @@ public interface FieldDescriptor {
 	Class<?> getFieldType();
 
 	default boolean isDefaultField() {
+		// TODO: 動的に指定できるようにする
 		return false;
 	}
 
