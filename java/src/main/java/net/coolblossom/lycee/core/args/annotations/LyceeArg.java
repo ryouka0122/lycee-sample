@@ -25,9 +25,9 @@ public @interface LyceeArg {
 	/** フォーマット（主に日付型で使用される想定） */
 	LyceeDateFormat dateFormat() default LyceeDateFormat.COMPACT_YYYY_MM_DD;
 
-	/** [未対応] デフォルト指定項目（使用可能なコレクションはListとSetのみ） */
+	/** [未対応] デフォルト指定項目（使用可能なコレクションは配列型、List、Setのみ） */
 	@Deprecated
-	boolean defaults() default false;
+	boolean isDefault() default false;
 
 	/** [未対応] 短縮名やエイリアス使用時に指定（一応、予約項目） */
 	@Deprecated
