@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -141,14 +142,14 @@ public class LyceeArgsProfileTest {
 		protected long arg003;
 
 		/** 整数型(public) */
-		protected long arg004;
+		public long arg004;
 
 		/** 整数型(private) */
-		protected long arg005;
+		private long arg005;
 	}
 
 	/**
-	 * AccessTestClassのテストデータ
+	 * AutoBindTestClassのテストデータ
 	 */
 	private static final @Nonnull String[][] AUTOBIND_TEST_DATA = {
 			{"--arg001", "abc", "--arg002", "3.14", "--arg003", "100", "--arg004", "200"},
@@ -212,6 +213,58 @@ public class LyceeArgsProfileTest {
 			printClassInfo(AutoBindTestClass.class, object);
 		}
 	}
+
+	@Test
+	public void test_pattern() {
+		final String regex = "--?([A-Za-z_][A-Za-z0-9_]*)";
+		final Pattern ptn = Pattern.compile(regex);
+		Stream.of(
+				// OK
+				"--arg", "-a", "--arg_001", "--arg001",
+				// NG
+				"ng", "---ng", "-ng-ng")
+		.forEach(arg -> {
+			System.out.println("==============================================");
+			System.out.println("target: " + arg);
+			ptn.splitAsStream(arg)
+			.forEach(System.out::println);
+			final boolean bMatches = Pattern.matches(regex, arg);
+			System.out.println("match: " + bMatches);
+		});
+
+	}
+
+	public static class ArrayTestClass {
+		@LyceeArg
+		String argString;
+		@LyceeArg
+		String argAry[];
+	}
+
+	@Test
+	public void test_array() {
+		final String args[] = {
+				"--argString", "abc"
+				, "--argAry", "1"
+				, "--argAry", "2"
+				, "--argAry", "3"
+				, "--argAry", "4"
+				, "--argAry", "5"
+		};
+
+		final ArrayTestClass object = new LyceeArgsProfile().createAndBind(ArrayTestClass.class, args);
+
+		System.out.println(object.argString);
+		System.out.println(Stream.of(object.argAry).collect(Collectors.joining(",")));
+
+	}
+
+
+
+
+
+
+
 
 
 	// ==================================================================
