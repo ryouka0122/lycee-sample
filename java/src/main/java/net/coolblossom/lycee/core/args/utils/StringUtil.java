@@ -1,5 +1,6 @@
 package net.coolblossom.lycee.core.args.utils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -34,6 +35,21 @@ public final class StringUtil {
 	 */
 	public static boolean equals(@Nullable final String left, @Nullable final String right) {
 		return (left==null) ? right==null : left.equals(right);
+	}
+
+	/**
+	 *
+	 * <b>非NULL化メソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param value 検証インスタンス
+	 * @param defaultStr valueがNULLの時の値
+	 * @return 非NULL {@link String}
+	 */
+	@Nonnull
+	public static String toString(@Nullable final String value, @Nonnull final String defaultStr) {
+		return (value!=null?value:defaultStr);
 	}
 
 }

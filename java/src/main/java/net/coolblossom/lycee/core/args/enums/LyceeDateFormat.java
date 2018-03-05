@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * 日付変換用フォーマット列挙型
@@ -46,10 +45,13 @@ public enum LyceeDateFormat {
 	 * @return 変換結果
 	 * @throws ParseException 変換処理で異常が発生した場合
 	 */
-	@Nullable
+	@Nonnull
 	public Date convert(@Nonnull final String date) throws ParseException {
 		final SimpleDateFormat sdf = new SimpleDateFormat(format);
 		final Date result = sdf.parse(date);
+		if(result==null) {
+			throw new NullPointerException();
+		}
 		return result;
 	}
 

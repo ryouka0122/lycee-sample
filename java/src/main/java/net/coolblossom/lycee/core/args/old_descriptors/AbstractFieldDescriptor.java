@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.descriptors;
+package net.coolblossom.lycee.core.args.old_descriptors;
 
 import java.lang.reflect.Field;
 
