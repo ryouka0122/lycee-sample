@@ -14,14 +14,14 @@ import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
-import net.coolblossom.lycee.core.args.descriptors.ArrayDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.ClassObjectDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.DateDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.EnumDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.PrimitiveDescriptor;
-import net.coolblossom.lycee.core.args.descriptors.SilentDescriptor;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
+import net.coolblossom.lycee.core.args.old_descriptors.ArrayDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.ClassObjectDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.DateDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.EnumDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.FieldDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.PrimitiveDescriptor;
+import net.coolblossom.lycee.core.args.old_descriptors.SilentDescriptor;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
 /**

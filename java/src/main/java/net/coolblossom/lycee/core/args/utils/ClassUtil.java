@@ -1,9 +1,14 @@
 package net.coolblossom.lycee.core.args.utils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
 /**
  *
@@ -15,6 +20,46 @@ import javax.annotation.Nonnull;
  */
 public final class ClassUtil {
 	private ClassUtil() { }
+
+	@Nonnull
+	static public <T> T newInstance(@Nonnull final Class<T> clazz) {
+		try {
+			final T obj = clazz.newInstance();
+			if(obj==null) {
+				throw new NullPointerException();
+			}
+			return obj;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new LyceeRuntimeException("インスタンス生成に失敗しました", e);
+		}
+	}
+
+	@Nonnull
+	static public <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
+		Constructor<T> ctor = null;
+		try {
+			final Class<?>[] ctorArgs = Stream.of(args)
+					.map(arg -> arg.getClass())
+					.toArray(Class<?>[]::new);
+			ctor = clazz.getConstructor(ctorArgs);
+		}catch(final NoSuchMethodException e) {
+			throw new LyceeRuntimeException("該当するコンストラクタがありませんでした", e);
+		} catch (final SecurityException e) {
+			throw new LyceeRuntimeException("コンストラクタの取得に失敗しました", e);
+		}
+		try {
+			final T obj = ctor.newInstance(args);
+			if(obj==null) {
+				throw new NullPointerException();
+			}
+			return obj;
+		} catch (InstantiationException
+				| IllegalAccessException
+				| IllegalArgumentException
+				| InvocationTargetException e) {
+			throw new LyceeRuntimeException("インスタンス生成に失敗しました", e);
+		}
+	}
 
 
 	@SuppressWarnings("null")

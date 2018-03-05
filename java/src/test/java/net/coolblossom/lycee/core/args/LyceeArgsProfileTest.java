@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -21,6 +23,7 @@ import org.junit.Test;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
+import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
 public class LyceeArgsProfileTest {
@@ -73,13 +76,13 @@ public class LyceeArgsProfileTest {
 	 */
 	private static final @Nonnull String[][] NORMAL_TEST_DATA = {
 			// 全部あり
-			{"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
+			{"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/03/12", "--argEnum", "TEST1"}
 			// 最後なし
-			, {"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01"}
+			, {"--argString", "abc", "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/03/12"}
 			// 先頭なし
-			, {                      "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
+			, {                      "--argDouble", "3.14", "--argLong", "100", "--argDate", "2018/03/12", "--argEnum", "TEST2"}
 			// 途中なし
-			, {"--argString", "abc",                        "--argLong", "100", "--argDate", "2018/01/01", "--argEnum", "TEST3"}
+			, {"--argString", "abc",                        "--argLong", "100", "--argDate", "2018/03/12", "--argEnum", "TEST3"}
 			// 1つだけ
 			, {"--argString", "abc" }
 	};
@@ -166,13 +169,32 @@ public class LyceeArgsProfileTest {
 	 */
 	@Test
 	@SuppressWarnings("null")
+	public void test_normal2() throws Exception {
+		Stream.of(NORMAL_TEST_DATA)
+		.forEach(data -> {
+			final TypeTestClass object = LyceeArgsMapper.createAndMap(TypeTestClass.class, data).execute();
+
+			System.out.println("==============================================");
+			printClassField(TypeTestClass.class, object);
+		});
+	}
+
+	/**
+	 * <b>test_normal</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@SuppressWarnings("null")
 	public void test_normal() throws Exception {
 		for(final @Nonnull String[] data : NORMAL_TEST_DATA) {
 			final LyceeArgsProfile profile = new LyceeArgsProfile();
 			final TypeTestClass object = profile.createAndBind(TypeTestClass.class, data);
 
 			System.out.println("==============================================");
-			printClassInfo(TypeTestClass.class, object);
+			printClassField(TypeTestClass.class, object);
 		}
 	}
 
@@ -191,7 +213,7 @@ public class LyceeArgsProfileTest {
 			final AccessTestClass object = profile.createAndBind(AccessTestClass.class, data);
 
 			System.out.println("==============================================");
-			printClassInfo(AccessTestClass.class, object);
+			printClassField(AccessTestClass.class, object);
 		}
 	}
 
@@ -210,26 +232,39 @@ public class LyceeArgsProfileTest {
 			final AutoBindTestClass object = profile.createAndBind(AutoBindTestClass.class, data);
 
 			System.out.println("==============================================");
-			printClassInfo(AutoBindTestClass.class, object);
+			printClassField(AutoBindTestClass.class, object);
 		}
 	}
 
 	@Test
 	public void test_pattern() {
-		final String regex = "--?([A-Za-z_][A-Za-z0-9_]*)";
+		final String regex = "^--?([A-Za-z_][A-Za-z0-9_]*)$";
 		final Pattern ptn = Pattern.compile(regex);
 		Stream.of(
 				// OK
 				"--arg", "-a", "--arg_001", "--arg001",
 				// NG
-				"ng", "---ng", "-ng-ng")
+				"ng", "---ng", "-ng-ng", "-", "--")
 		.forEach(arg -> {
 			System.out.println("==============================================");
 			System.out.println("target: " + arg);
-			ptn.splitAsStream(arg)
-			.forEach(System.out::println);
-			final boolean bMatches = Pattern.matches(regex, arg);
-			System.out.println("match: " + bMatches);
+			String matchingStr = "";
+			final Matcher m = ptn.matcher(arg);
+			boolean bFind = false;
+			int groupCount = 0;
+			if(m.find()) {
+				groupCount = m.groupCount();
+				bFind = true;
+				matchingStr = IntStream.rangeClosed(1, groupCount)
+						.mapToObj(m::group)
+						.collect(Collectors.joining(",", "[", "]"));
+			}
+
+			System.out.println(new StringBuilder()
+					.append("find=").append(bFind)
+					.append(" / groupCount=").append(groupCount)
+					.append(" / matchingStr=").append(matchingStr)
+					.toString());
 		});
 
 	}
@@ -374,13 +409,20 @@ public class LyceeArgsProfileTest {
 	 * @param clazz
 	 * @param object
 	 */
-	private <T> void printClassInfo(final Class<T> clazz, final T object) {
+	private <T> void printClassField(final Class<T> clazz, final T object) {
+		final int maxFieldNameSize = Stream.of(clazz.getDeclaredFields())
+				.filter(f -> !Modifier.isStatic(f.getModifiers()))
+				.mapToInt(f->f.getName().length())
+				.max().getAsInt();
+		final String fomratPattern = "[%9s] %-"+maxFieldNameSize+"s = %s";
+
 		Stream.of(clazz.getDeclaredFields())
+		.filter(f -> !Modifier.isStatic(f.getModifiers()))
 		.forEach(field-> {
 			field.setAccessible(true);
 			try {
 				System.out.println(String.format(
-						"[%9s] %-10s = %s"
+						fomratPattern
 						, getAccessibleName(field.getModifiers())
 						, field.getName()
 						, field.get(object)
