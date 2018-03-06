@@ -31,9 +31,4 @@ public @interface LyceeArg {
 	/** 短縮名やエイリアス使用時に指定 */
 	String alias() default "";
 
-	/** [未対応] デフォルト指定項目（使用可能なコレクションは配列型、List、Setのみ） */
-	@Deprecated
-	boolean isDefault() default false;
-
-
 }
