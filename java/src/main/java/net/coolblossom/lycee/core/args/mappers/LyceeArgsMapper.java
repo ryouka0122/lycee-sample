@@ -22,10 +22,10 @@ public class LyceeArgsMapper {
 	 *
 	 * @param clazz 指定クラス
 	 * @param args 引数リスト
-	 * @return {@link LyceeBinder}
+	 * @return {@link LyceeArgsMapExecutor}
 	 */
 	@Nonnull
-	public static <T> LyceeBinder<T> createAndMap(
+	public static <T> LyceeArgsMapExecutor<T> createAndMap(
 			@Nonnull final Class<T> clazz,
 			@Nonnull final String args[]
 			) {
@@ -39,13 +39,13 @@ public class LyceeArgsMapper {
 	 *
 	 * @param target 対象オブジェクト
 	 * @param args 引数リスト
-	 * @return {@link LyceeBinder}
+	 * @return {@link LyceeArgsMapExecutor}
 	 */
 	@Nonnull
-	public static <T> LyceeBinder<T> map(
+	public static <T> LyceeArgsMapExecutor<T> map(
 			@Nonnull final T target,
 			@Nonnull final String args[]
 			) {
-		return new LyceeBinder<T>(target, args);
+		return new LyceeArgsMapExecutor<T>(target, args);
 	}
 }

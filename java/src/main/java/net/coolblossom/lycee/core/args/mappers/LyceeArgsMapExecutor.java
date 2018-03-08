@@ -14,13 +14,11 @@ import org.apache.log4j.Logger;
 import javassist.Modifier;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
-import net.coolblossom.lycee.core.args.convertors.Convertor;
-import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
 import net.coolblossom.lycee.core.args.descriptor.FieldDescriptor;
+import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
-public class LyceeBinder<T> {
-
-	private static Logger logger = Logger.getLogger(LyceeBinder.class);
+public class LyceeArgsMapExecutor<T> {
+	private static Logger logger = Logger.getLogger(LyceeArgsMapExecutor.class);
 
 	/** keyとなる文字列の正規表現 */
 	private static final String DEFAULT_KEY_FORMAT_STRING = "^--?([A-Za-z_][A-Za-z0-9_]+)$";
@@ -35,23 +33,29 @@ public class LyceeBinder<T> {
 	@Nonnull
 	private final String args[];
 
-	@Nonnull
-	private final ConvertorFactory convertorFactory;
-
-	public LyceeBinder(@Nonnull final T target, @Nonnull final String args[]) {
+	public LyceeArgsMapExecutor(@Nonnull final T target, @Nonnull final String args[]) {
 		this.target = target;
 		this.args = args;
-		this.convertorFactory = ConvertorFactory.createInstance();
 	}
 
+	/**
+	 *
+	 * <b>マッピング処理</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @return マッピングされたインスタンス
+	 */
 	public T execute() {
 
+		// マッピング対象フィールドの一覧生成
 		final List<FieldDescriptor> descriptors = createDescriptorList();
 		if(descriptors.isEmpty()) {
 			return target;
 		}
-
+		// マッピングさせるキーのフォーマット
 		final Pattern keyPattern = Pattern.compile(DEFAULT_KEY_FORMAT_STRING);
+
 		for(int ki=0, vi=1 ; vi<args.length ; ki++, vi++) {
 			final String key = args[ki];
 			final String value = args[vi];
@@ -60,10 +64,14 @@ public class LyceeBinder<T> {
 
 			final Matcher matcher = keyPattern.matcher(key);
 			if(!matcher.find()) {
+				// フォーマットに合致しない場合は次に進む
 				continue;
 			}
 
 			final String trimmedKey = matcher.group(1);
+			if(trimmedKey==null) {
+				throw new NullPointerException();
+			}
 			for(final FieldDescriptor desc : descriptors) {
 				if(desc.matches(trimmedKey)) {
 					logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
@@ -89,7 +97,7 @@ public class LyceeBinder<T> {
 
 		return fieldStream
 				.peek(f->f.setAccessible(true))
-				.map(this::createDescriptor)
+				.map(LyceeArgsUtil::createDescriptor)
 				.collect(Collectors.toList());
 	}
 
@@ -107,27 +115,6 @@ public class LyceeBinder<T> {
 		final int mod = field.getModifiers();
 		return (Modifier.isPublic(mod) || Modifier.isProtected(mod))
 				&& !Modifier.isFinal(mod);
-	}
-
-	/**
-	 *
-	 * <b>FieldからFieldDescriptorを生成するメソッド</b>
-	 * <p>
-	 * </p>
-	 *
-	 * @param field 対象フィールド
-	 * @return {@link FieldDescriptor}のインスタンス
-	 */
-	@Nonnull
-	private FieldDescriptor createDescriptor(@Nonnull final Field field) {
-		@Nonnull
-		Class<?> fieldType = field.getType();
-		if(fieldType.isArray()) {
-			fieldType = fieldType.getComponentType();
-		}
-		final Convertor convertor = convertorFactory.createConvertor(fieldType, field.getDeclaredAnnotation(LyceeArg.class));
-		logger.info("field="+field.getName() + " / convertor=" + convertor);
-		return new FieldDescriptor(field, convertor);
 	}
 
 

@@ -3,27 +3,16 @@ package net.coolblossom.lycee.core.args.descriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-
-import org.apache.log4j.Logger;
+import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.convertors.Convertor;
-import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
+import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
 import net.coolblossom.lycee.core.args.utils.StringUtil;
 
-/**
- *
- * <b>フィールドの情報を管理するクラス</b>
- * <p>
- * </p>
- * @author ryouka
- *
- */
-public class FieldDescriptor {
-	private final Logger logger = Logger.getLogger(FieldDescriptor.class);
+public abstract class FieldDescriptor {
 
 	@Nonnull
 	protected Field field;
@@ -34,33 +23,21 @@ public class FieldDescriptor {
 	@Nonnull
 	protected List<String> matchingNameList;
 
-	/**
-	 * コンストラクタ
-	 * @param field
-	 * @param convertor
-	 */
-	public FieldDescriptor(@Nonnull final Field field, @Nonnull final Convertor convertor) {
+
+	protected FieldDescriptor(@Nonnull final Field field, @Nonnull final Class<?> type) {
 		this.field = field;
-		this.convertor = convertor;
-		matchingNameList = new ArrayList<>();
+		convertor = getConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
+		matchingNameList = makeNameList();
+	}
 
-		String name = field.getName();
-		if(field.isAnnotationPresent(LyceeArg.class)) {
-			final LyceeArg lyceeArg = field.getDeclaredAnnotation(LyceeArg.class);
-			if( !StringUtil.isEmpty(lyceeArg.name())) {
-				name=lyceeArg.name();
-			}
 
-			if( !StringUtil.isEmpty(lyceeArg.alias()) ) {
-				matchingNameList.add(lyceeArg.alias());
-			}
-		}
-		matchingNameList.add(name);
+	abstract public void set(@Nonnull Object obj, @Nullable String value);
 
-		logger.info(String.format("field=%s / convertorName=%s / matchingNameList=%s", field.getName(),
-				convertor.getClass().getName(),
-				matchingNameList.stream().collect(Collectors.joining(",","[","]"))
-				));
+
+	@Nonnull
+	private Convertor getConvertor(@Nonnull final Class<?> clazz, @Nullable final LyceeArg lyceeArg) {
+		final ConvertorFactory factory = ConvertorFactory.getInstance();
+		return factory.createConvertor(clazz, lyceeArg);
 	}
 
 	/**
@@ -78,24 +55,31 @@ public class FieldDescriptor {
 
 	/**
 	 *
-	 * <b>変換処理</b>
+	 * <b>フィールドの名称リストを生成</b>
 	 * <p>
+	 * LyceeArgが付与されている場合、それを優先して名称を指定する。<br>
+	 * もし、LyceeArgが付与されていなければ、フィールド名を使用する。<br>
+	 * LyceeArg#aliasに指定されていれば、別名として名称リストに追加する<br>
 	 * </p>
 	 *
-	 * @param str 引数値
+	 * @return 名称リスト
 	 */
-	public void set(final Object obj, @Nonnull final String str) {
-		try {
-			logger.info(String.format("field=%s / str=%s", field.getName(), str));
-			final Object value = convertor.convert(str);
+	@Nonnull
+	private List<String> makeNameList() {
+		final List<String> result = new ArrayList<>();
 
-			field.set(obj, value);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new LyceeRuntimeException(
-					String.format("オブジェクトへのマッピングに失敗しました[field=%s/value=%s]", field.getName(), str),
-					e);
+		String name = field.getName();
+		if(field.isAnnotationPresent(LyceeArg.class)) {
+			final LyceeArg lyceeArg = field.getDeclaredAnnotation(LyceeArg.class);
+			if( !StringUtil.isEmpty(lyceeArg.name())) {
+				name=lyceeArg.name();
+			}
+
+			if( !StringUtil.isEmpty(lyceeArg.alias()) ) {
+				result.add(lyceeArg.alias());
+			}
 		}
+		result.add(name);
+		return result;
 	}
-
-
 }

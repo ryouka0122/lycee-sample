@@ -13,6 +13,14 @@ import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
+/**
+ *
+ * <b>コンバータ生成クラス</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public class ConvertorFactory {
 	private static Logger logger = Logger.getLogger(ConvertorFactory.class);
 
@@ -28,7 +36,7 @@ public class ConvertorFactory {
 	 * @return ConvertorFactoryのインスタンス
 	 */
 	@Nonnull
-	public static ConvertorFactory createInstance() {
+	public static ConvertorFactory getInstance() {
 		return new ConvertorFactory();
 	}
 

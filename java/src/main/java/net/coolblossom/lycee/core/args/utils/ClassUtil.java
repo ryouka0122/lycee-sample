@@ -1,7 +1,10 @@
 package net.coolblossom.lycee.core.args.utils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,7 +25,7 @@ public final class ClassUtil {
 	private ClassUtil() { }
 
 	@Nonnull
-	static public <T> T newInstance(@Nonnull final Class<T> clazz) {
+	public static <T> T newInstance(@Nonnull final Class<T> clazz) {
 		try {
 			final T obj = clazz.newInstance();
 			if(obj==null) {
@@ -35,7 +38,7 @@ public final class ClassUtil {
 	}
 
 	@Nonnull
-	static public <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
+	public static <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
 		Constructor<T> ctor = null;
 		try {
 			final Class<?>[] ctorArgs = Stream.of(args)
@@ -63,7 +66,7 @@ public final class ClassUtil {
 
 
 	@SuppressWarnings("null")
-	static public boolean isParent(@Nonnull final Class<?> child, @Nonnull final Class<?> parent) {
+	public static boolean isParent(@Nonnull final Class<?> child, @Nonnull final Class<?> parent) {
 		if(child.equals(Object.class)) {
 			return parent.equals(Object.class);
 		}
@@ -79,7 +82,7 @@ public final class ClassUtil {
 	}
 
 	@Nonnull
-	static public List<Class<?>> getAncestors(@Nonnull final Class<?> clazz) {
+	public static List<Class<?>> getAncestors(@Nonnull final Class<?> clazz) {
 		final List<Class<?>> ancestorList = new ArrayList<>();
 		if(null!=clazz.getSuperclass()) {
 			ancestorList.add(clazz.getSuperclass());
@@ -88,6 +91,19 @@ public final class ClassUtil {
 			ancestorList.add(interfaceClass);
 		}
 		return ancestorList;
+	}
+
+
+	@Nonnull
+	public static Class<?>[] getActualTypeArguments(@Nonnull final Field field) {
+		final Type fieldGenericType = field.getGenericType();
+
+		if( !(fieldGenericType instanceof ParameterizedType) ) {
+			throw null;
+		}
+		return Stream.of(((ParameterizedType)fieldGenericType).getActualTypeArguments())
+				.filter(t-> t instanceof Class)
+				.toArray(Class<?>[]::new);
 	}
 
 }
