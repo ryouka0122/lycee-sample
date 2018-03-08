@@ -98,8 +98,8 @@ public final class ClassUtil {
 	public static Class<?>[] getActualTypeArguments(@Nonnull final Field field) {
 		final Type fieldGenericType = field.getGenericType();
 
-		if( !(fieldGenericType instanceof ParameterizedType) ) {
-			throw null;
+		if( fieldGenericType instanceof Class) {
+			return new Class<?>[] { (Class<?>)fieldGenericType };
 		}
 		return Stream.of(((ParameterizedType)fieldGenericType).getActualTypeArguments())
 				.filter(t-> t instanceof Class)
