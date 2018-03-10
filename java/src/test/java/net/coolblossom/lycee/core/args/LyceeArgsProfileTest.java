@@ -283,15 +283,15 @@ public class LyceeArgsProfileTest {
 
 	public static class CollectionTestClass {
 		@LyceeArg
-		@LyceeArgCollection(container=ArrayList.class, types={Integer.class})
+		@LyceeArgCollection(value=ArrayList.class, types={Integer.class})
 		protected List<Integer> intList;
 
 		@LyceeArg
-		@LyceeArgCollection(container=LinkedHashMap.class, types={String.class, String.class})
+		@LyceeArgCollection(value=LinkedHashMap.class, types={String.class, String.class})
 		protected Map<String, String> strMap;
 
 		@LyceeArg
-		@LyceeArgCollection(container=HashSet.class, types={String.class})
+		@LyceeArgCollection(value=HashSet.class, types={String.class})
 		protected Set<String> strSet;
 	}
 

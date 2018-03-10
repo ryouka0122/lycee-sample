@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface LyceeArgCollection {
 	/** 紐づけ時に使用したいクラス */
-	Class<?> container() default Object.class;
+	Class<?> value() default Object.class;
 
 	/** Collection/Mapのジェネリック型のリスト */
 	Class<?>[] types() default {};
