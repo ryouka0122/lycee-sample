@@ -78,7 +78,7 @@ public class CollectionDescriptorTest {
 	@Test
 	public void test_character_list() throws NoSuchFieldException, SecurityException {
 		// 投入するデータ
-		final String[] testData = "abbccddde".split(".");
+		final String[] testData = "abbccddde".split("");
 
 		// 検証クラス
 		final TestClass testClass = new TestClass();
