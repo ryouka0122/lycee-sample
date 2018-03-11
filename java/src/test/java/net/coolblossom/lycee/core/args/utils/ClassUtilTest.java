@@ -10,8 +10,10 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArgCollection;
+import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 import net.coolblossom.lycee.core.args.testutil.StringHolder;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
+import net.coolblossom.lycee.core.args.testutil.TestCodeEnum;
 
 /**
  * <b></b>
@@ -109,6 +111,24 @@ public class ClassUtilTest {
 		});
 	}
 
+	@Test
+	public void test_isParent() {
+		final Class<?> clazz = TestCodeEnum.class;
+
+		if(ClassUtil.isParent(clazz, Enum.class)) {
+			System.out.println(clazz.getName() + " is child of Enum class");
+		}
+		if(ClassUtil.isParent(clazz, LyceeCodeEnum.class)) {
+			System.out.println(clazz.getName() + " is child of LyceeCodeEnum class");
+		}
+		if(ClassUtil.isParent(clazz, TestCodeEnum.class)) {
+			System.out.println(clazz.getName() + " is child of TestCodeEnum class");
+		}
+
+		final LyceeCodeEnum[] codeEnumAry = (LyceeCodeEnum[]) clazz.getEnumConstants();
+		Stream.of(codeEnumAry)
+		.forEach(System.out::println);
+	}
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "null" })
