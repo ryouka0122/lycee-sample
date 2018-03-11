@@ -1,12 +1,16 @@
 package net.coolblossom.lycee.core.args;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +26,7 @@ import org.junit.Test;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
+import net.coolblossom.lycee.core.args.annotations.LyceeArgCollection;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
@@ -276,6 +281,55 @@ public class LyceeArgsProfileTest {
 		String argAry[];
 	}
 
+	public static class CollectionTestClass {
+		@LyceeArg
+		@LyceeArgCollection(value=ArrayList.class, types={Integer.class})
+		protected List<Integer> intList;
+
+		@LyceeArg
+		@LyceeArgCollection(value=LinkedHashMap.class, types={String.class, String.class})
+		protected Map<String, String> strMap;
+
+		@LyceeArg
+		@LyceeArgCollection(value=HashSet.class, types={String.class})
+		protected Set<String> strSet;
+	}
+
+	@Test
+	public void test_collection() {
+		Stream.of(CollectionTestClass.class.getDeclaredFields())
+		.forEach(arg0 -> {
+			try {
+				printFieldInfo(arg0);
+			} catch (final Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private void printFieldInfo(final Field field) throws Exception {
+		final String name = field.getName();
+		System.out.println(name + " - getType : " + field.getType());
+		final Type type = field.getGenericType();
+		System.out.println(name + " - getGenericType : " + type);
+		if(type instanceof ParameterizedType) {
+			final ParameterizedType pty = (ParameterizedType)type;
+			for(final Type ta : pty.getActualTypeArguments()) {
+				if(ta instanceof Class) {
+					final Class cls = (Class)ta;
+					Object obj = null;
+					if(cls.equals(Integer.class) ) {
+						obj = cls.getConstructor(int.class).newInstance(1);
+					}else if(cls.equals(String.class) ) {
+						obj = cls.getConstructor(String.class).newInstance("str");
+					}
+					System.out.println(obj);
+				}
+			}
+		}
+	}
+
 	@Test
 	public void test_array() {
 		final String args[] = {
@@ -293,13 +347,6 @@ public class LyceeArgsProfileTest {
 		System.out.println(Stream.of(object.argAry).collect(Collectors.joining(",")));
 
 	}
-
-
-
-
-
-
-
 
 
 	// ==================================================================
@@ -325,7 +372,6 @@ public class LyceeArgsProfileTest {
 			System.out.println(" - getComponentType : " + clazz.getComponentType());
 			System.out.println(" - getGenericSuperclass : " + clazz.getGenericSuperclass());
 			System.out.println(" - getTypeParameters : " + Stream.of(clazz.getTypeParameters()).map(t->t.getName()).collect(Collectors.joining(",")));
-
 			System.out.println(" - ArrayList : " + ClassUtil.isParent(clazz, ArrayList.class));
 			System.out.println(" - HashSet : " + ClassUtil.isParent(clazz, HashSet.class));
 			System.out.println(" - HashMap : " + ClassUtil.isParent(clazz, Map.class));

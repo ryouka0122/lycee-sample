@@ -13,11 +13,24 @@ import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
+/**
+ *
+ * <b>コンバータ生成クラス</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public class ConvertorFactory {
+
+
 	private static Logger logger = Logger.getLogger(ConvertorFactory.class);
+
+	private static ConvertorFactory theInstance = null;
 
 	@Nonnull
 	private final Map<Class<?>, Class<Convertor>> convertorMap;
+
 
 	/**
 	 *
@@ -28,8 +41,11 @@ public class ConvertorFactory {
 	 * @return ConvertorFactoryのインスタンス
 	 */
 	@Nonnull
-	public static ConvertorFactory createInstance() {
-		return new ConvertorFactory();
+	public static synchronized ConvertorFactory getInstance() {
+		if(theInstance==null) {
+			theInstance = new ConvertorFactory();
+		}
+		return theInstance;
 	}
 
 	protected ConvertorFactory() {
@@ -61,6 +77,9 @@ public class ConvertorFactory {
 			}else {
 				return new EnumConvertor(clazz);
 			}
+		}else if(Character.class.equals(clazz)) {
+			// Characterだけほかのラッパーとは違うので個別対応
+			return new WrapperConvertor(clazz, str->str.charAt(0));
 		}else if(java.util.Date.class.equals(clazz)) {
 			return new DateConvertor(clazz, lyceeArg!=null ?lyceeArg.dateFormat(): LyceeDateFormat.COMPACT_YYYY_MM_DD);
 		}
