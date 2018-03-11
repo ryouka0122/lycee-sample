@@ -6,20 +6,35 @@ import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
+import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
-public class CodeEnumConvertor extends Convertor {
+/**
+ * <b>LyceeArg専用Enumの変換処理クラス</b>
+ * <p>
+ * LyceeCodeEnumで定義されるcode値をもとに変換をかけます。
+ * </p>
+ * @author ryouka
+ *
+ */
+public class LyceeCodeEnumConvertor extends Convertor {
 
+	/** 対象のCodeEnumの定数 */
 	@Nonnull
 	private final LyceeCodeEnum valueList[];
 
-	public CodeEnumConvertor(@Nonnull final Class<?> typeClass) {
+	/**
+	 * コンストラクタ
+	 * @param typeClass
+	 */
+	public LyceeCodeEnumConvertor(@Nonnull final Class<?> typeClass) {
 		super(typeClass);
-		Stream.of(typeClass.getInterfaces())
-		.filter(clazz -> clazz.equals(LyceeCodeEnum.class))
-		.findAny()
-		.orElseThrow(() -> new LyceeRuntimeException("LyceeCodeEnumが継承されていません。[class="+typeClass.getName()+"]"));
+
+		if( !ClassUtil.isParent(typeClass, LyceeCodeEnum.class) ) {
+			throw new LyceeRuntimeException("LyceeCodeEnumが継承されていません。[class="+typeClass.getName()+"]");
+		}
 
 		valueList = (LyceeCodeEnum[]) typeClass.getEnumConstants();
+
 	}
 
 	@Override

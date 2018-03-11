@@ -6,8 +6,19 @@ import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
+/**
+ * <b>LyceeCodeEnumを継承していないEnum型の変換処理クラス</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public class EnumConvertor extends Convertor {
 
+	/**
+	 * コンストラクタ
+	 * @param typeClass
+	 */
 	public EnumConvertor(@Nonnull final Class<?> typeClass) {
 		super(typeClass);
 	}
