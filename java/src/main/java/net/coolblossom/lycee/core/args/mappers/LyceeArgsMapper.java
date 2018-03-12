@@ -5,8 +5,7 @@ import javax.annotation.Nonnull;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
 /**
- *
- * <b></b>
+ * <b>LyceeArgsのマッピング処理</b>
  * <p>
  * </p>
  * @author ryouka
