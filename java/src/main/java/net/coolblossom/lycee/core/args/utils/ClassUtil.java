@@ -3,6 +3,7 @@ package net.coolblossom.lycee.core.args.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -106,4 +107,16 @@ public final class ClassUtil {
 				.toArray(Class<?>[]::new);
 	}
 
+	/**
+	 * <b>実装クラスか確認するメソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param clazz
+	 * @return
+	 */
+	public static boolean isImplementationClass(@Nonnull final Class<?> clazz) {
+		return clazz.isInterface()
+				|| Modifier.isAbstract(clazz.getModifiers());
+	}
 }

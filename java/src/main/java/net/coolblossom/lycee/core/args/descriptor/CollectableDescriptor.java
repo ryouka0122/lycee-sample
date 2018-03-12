@@ -19,14 +19,24 @@ import net.coolblossom.lycee.core.args.utils.ClassUtil;
  */
 public abstract class CollectableDescriptor extends FieldDescriptor {
 
+	/** フィールドに付与されているLyceeArgCollectionアノテーション */
+	@Nonnull
 	protected LyceeArgCollection annoCollection;
 
+	/**
+	 * コンストラクタ
+	 * @param field
+	 * @param actualType
+	 */
 	protected CollectableDescriptor(@Nonnull final Field field, @Nonnull final Class<?> actualType) {
 		super(field, actualType);
-		annoCollection = field.getDeclaredAnnotation(LyceeArgCollection.class);
-		if(annoCollection!=null) {
-			verifyClassInheritance(annoCollection.value(), field.getType());
+		final LyceeArgCollection anno = field.getDeclaredAnnotation(LyceeArgCollection.class);
+		if(anno==null) {
+			throw new LyceeRuntimeException(
+					String.format("fieldにLyceeArgCollectionがついてません[field=%s]", field.getName()));
 		}
+		verifyClassAndInheritance(anno.value(), field.getType());
+		annoCollection = anno;
 	}
 
 	/**
@@ -37,7 +47,7 @@ public abstract class CollectableDescriptor extends FieldDescriptor {
 	 * @param containerType アノテーションの型
 	 * @param fieldType フィールドの型
 	 */
-	private void verifyClassInheritance(@Nullable final Class<?> containerType, @Nonnull final Class<?> fieldType) {
+	private void verifyClassAndInheritance(@Nullable final Class<?> containerType, @Nonnull final Class<?> fieldType) {
 		if(containerType==null || containerType.equals(Object.class)) {
 			throw new LyceeRuntimeException(
 					String.format("LyceeArgCollectionのcontainerにインスタンス生成時の型を指定してください[field=%s]" ,field.getName()));
@@ -45,7 +55,11 @@ public abstract class CollectableDescriptor extends FieldDescriptor {
 		if(!ClassUtil.isParent(containerType, fieldType)) {
 			throw new LyceeRuntimeException(
 					String.format("LyceeArgCollection#containerにはフィールドの型と同じか継承した型を指定してください[field=%s / LyceeArgCollection#container=%s]",
-							fieldType.getName(), containerType.getClass()));
+							fieldType.getName(), containerType.getName()));
+		}
+		if(!ClassUtil.isImplementationClass(containerType)) {
+			throw new LyceeRuntimeException(
+					String.format("LyceeArgCollection#containerにインタフェイスクラスや抽象クラスを指定することはできません[LyceeArgCollection#container=%s]", containerType.getName()));
 		}
 	}
 
@@ -63,13 +77,9 @@ public abstract class CollectableDescriptor extends FieldDescriptor {
 	protected Object getFieldObject(final Object obj) throws IllegalArgumentException, IllegalAccessException {
 		final Object target = field.get(obj);
 		if(target!=null) {
+			// フィールドから取得できれば、それを返却する
 			return target;
 		}
-		if(annoCollection==null) {
-			throw new LyceeRuntimeException(
-					String.format("fieldにLyceeArgCollectionがついてません[field=%s]", field.getName()));
-		}
-
 		final Class<?> containerType = annoCollection.value();
 		return ClassUtil.newInstance(containerType);
 	}

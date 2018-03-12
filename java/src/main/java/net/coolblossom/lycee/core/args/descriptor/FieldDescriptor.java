@@ -9,36 +9,51 @@ import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.convertors.Convertor;
-import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
+import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 import net.coolblossom.lycee.core.args.utils.StringUtil;
 
+/**
+ * <b>フィールド記述子</b>
+ * <p>
+ * マッピングさせるフィールドの特性を識別し、適切に値を設定するためのクラス
+ * </p>
+ * @author ryouka
+ *
+ */
 public abstract class FieldDescriptor {
 
+	/** マッピングさせるフィールド */
 	@Nonnull
 	protected Field field;
 
+	/** マッピングする際の変換処理クラス */
 	@Nonnull
 	protected Convertor convertor;
 
+	/** マッピング用名称リスト（ここにある名前と同じ場合マッピングされる） */
 	@Nonnull
 	protected List<String> matchingNameList;
 
-
+	/**
+	 * コンストラクタ
+	 * @param field マッピング対象フィールド
+	 * @param type フィールドの型クラス（配列の場合配列となっているクラス、ジェネリック型の場合、型パラメータとなっている実クラスの型）
+	 */
 	protected FieldDescriptor(@Nonnull final Field field, @Nonnull final Class<?> type) {
 		this.field = field;
-		convertor = getConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
+		convertor = LyceeArgsUtil.createConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
 		matchingNameList = makeNameList();
 	}
 
-
+	/**
+	 * <b>値をセットするメソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param obj セットする対象オブジェクト
+	 * @param value セットする値
+	 */
 	abstract public void set(@Nonnull Object obj, @Nullable String value);
-
-
-	@Nonnull
-	private Convertor getConvertor(@Nonnull final Class<?> clazz, @Nullable final LyceeArg lyceeArg) {
-		final ConvertorFactory factory = ConvertorFactory.getInstance();
-		return factory.createConvertor(clazz, lyceeArg);
-	}
 
 	/**
 	 *

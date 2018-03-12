@@ -8,12 +8,32 @@ import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
+/**
+ * <b>配列用記述子</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public class ArrayDescriptor extends FieldDescriptor {
 
+	/**
+	 * コンストラクタ
+	 * @param field
+	 * @param componentType
+	 */
 	public ArrayDescriptor(@Nonnull final Field field, @Nonnull final Class<?> componentType) {
 		super(verifyField(field), componentType);
 	}
 
+	/**
+	 * <b>フィールドの検証</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param field
+	 * @return
+	 */
 	@Nonnull
 	private static Field verifyField(@Nonnull final Field field) {
 		if(!field.getType().isArray()) {
@@ -26,6 +46,7 @@ public class ArrayDescriptor extends FieldDescriptor {
 	@Override
 	public void set(@Nonnull final Object obj, @Nullable final String value) {
 		if(value==null) {
+			// nullが来たら何もしない
 			return;
 		}
 		try {

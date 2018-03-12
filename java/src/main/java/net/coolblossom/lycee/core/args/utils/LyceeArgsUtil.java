@@ -5,9 +5,13 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
 
+import net.coolblossom.lycee.core.args.annotations.LyceeArg;
+import net.coolblossom.lycee.core.args.convertors.Convertor;
+import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
 import net.coolblossom.lycee.core.args.descriptor.ArrayDescriptor;
 import net.coolblossom.lycee.core.args.descriptor.CollectionDescriptor;
 import net.coolblossom.lycee.core.args.descriptor.FieldDescriptor;
@@ -55,6 +59,20 @@ public final class LyceeArgsUtil {
 		}
 	}
 
+	/**
+	 * <b>変換処理クラスの取得メソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param clazz
+	 * @param lyceeArg
+	 * @return
+	 */
+	@Nonnull
+	public static Convertor createConvertor(@Nonnull final Class<?> clazz, @Nullable final LyceeArg lyceeArg) {
+		final ConvertorFactory factory = ConvertorFactory.getInstance();
+		return factory.createConvertor(clazz, lyceeArg);
+	}
 
 
 

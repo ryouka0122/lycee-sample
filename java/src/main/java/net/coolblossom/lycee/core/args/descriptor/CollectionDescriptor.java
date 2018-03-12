@@ -10,7 +10,7 @@ import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
 /**
- * <b></b>
+ * <b>コレクション用記述子</b>
  * <p>
  * </p>
  * @author ryouka
