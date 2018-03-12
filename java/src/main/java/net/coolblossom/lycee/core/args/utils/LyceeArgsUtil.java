@@ -47,14 +47,16 @@ public final class LyceeArgsUtil {
 		@Nonnull
 		final Class<?> fieldType = field.getType();
 		if(fieldType.isArray()) {
+			// 配列型の時
 			return new ArrayDescriptor(field, fieldType.getComponentType());
-		}
-
-		if (ClassUtil.isParent(fieldType, Collection.class)) {
+		}else if (ClassUtil.isParent(fieldType, Collection.class)) {
+			// Collection型の時
 			return new CollectionDescriptor(field, ClassUtil.getActualTypeArguments(field)[0]);
 		}else if (ClassUtil.isParent(fieldType, Map.class)) {
+			// Map型の時
 			return new MapDescriptor(field, ClassUtil.getActualTypeArguments(field)[1]);
 		}else {
+			// それ以外（通常のフィールドと認識された）
 			return new TypeDescriptor(field, fieldType);
 		}
 	}
@@ -64,9 +66,9 @@ public final class LyceeArgsUtil {
 	 * <p>
 	 * </p>
 	 *
-	 * @param clazz
-	 * @param lyceeArg
-	 * @return
+	 * @param clazz Convertorを継承した型クラス
+	 * @param lyceeArg フィールドに付与されていたLyceeArgアノテーション
+	 * @return 変換処理クラス
 	 */
 	@Nonnull
 	public static Convertor createConvertor(@Nonnull final Class<?> clazz, @Nullable final LyceeArg lyceeArg) {
