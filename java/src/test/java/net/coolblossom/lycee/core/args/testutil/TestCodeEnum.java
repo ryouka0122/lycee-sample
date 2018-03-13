@@ -2,6 +2,13 @@ package net.coolblossom.lycee.core.args.testutil;
 
 import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 
+/**
+ * <b>テスト用列挙型（LyceeCodeEnum継承版）</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public enum TestCodeEnum implements LyceeCodeEnum {
 	TEST1("1", "test 1")
 	,TEST2("2", "test 2")
