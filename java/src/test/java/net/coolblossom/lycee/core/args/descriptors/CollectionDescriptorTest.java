@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.descriptor;
+package net.coolblossom.lycee.core.args.descriptors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.descriptors.CollectionDescriptor;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 

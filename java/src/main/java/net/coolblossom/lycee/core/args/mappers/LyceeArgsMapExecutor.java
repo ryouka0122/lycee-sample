@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import javassist.Modifier;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
-import net.coolblossom.lycee.core.args.descriptor.FieldDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
 import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**

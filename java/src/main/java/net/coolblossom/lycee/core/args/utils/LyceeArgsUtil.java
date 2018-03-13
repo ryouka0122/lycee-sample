@@ -12,11 +12,11 @@ import org.apache.log4j.Logger;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.convertors.Convertor;
 import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
-import net.coolblossom.lycee.core.args.descriptor.ArrayDescriptor;
-import net.coolblossom.lycee.core.args.descriptor.CollectionDescriptor;
-import net.coolblossom.lycee.core.args.descriptor.FieldDescriptor;
-import net.coolblossom.lycee.core.args.descriptor.MapDescriptor;
-import net.coolblossom.lycee.core.args.descriptor.TypeDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.ArrayDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.CollectionDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.MapDescriptor;
+import net.coolblossom.lycee.core.args.descriptors.TypeDescriptor;
 
 /**
  *
