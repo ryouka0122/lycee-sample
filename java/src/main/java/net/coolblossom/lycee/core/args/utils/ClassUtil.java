@@ -3,6 +3,7 @@ package net.coolblossom.lycee.core.args.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,6 +25,16 @@ import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 public final class ClassUtil {
 	private ClassUtil() { }
 
+	/**
+	 * <b>インスタンス生成</b>
+	 * <p>
+	 * インスタンスを生成します。<br>
+	 * デフォルトコンストラクタが存在しない場合エラーとなります。（Integerなど）<br>
+	 * </p>
+	 *
+	 * @param clazz 生成したいインスタンスの型
+	 * @return 生成したインスタンス
+	 */
 	@Nonnull
 	public static <T> T newInstance(@Nonnull final Class<T> clazz) {
 		try {
@@ -37,6 +48,17 @@ public final class ClassUtil {
 		}
 	}
 
+	/**
+	 * <b>インスタンス生成</b>
+	 * <p>
+	 * インスタンスを生成します。<br>
+	 * 指定した引数の型で定義されているコンストラクタが存在しない場合エラーとなります。<br>
+	 * </p>
+	 *
+	 * @param clazz 生成したいインスタンスの型
+	 * @param args コンストラクタの引数
+	 * @return 生成したインスタンス
+	 */
 	@Nonnull
 	public static <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
 		Constructor<T> ctor = null;
@@ -64,7 +86,20 @@ public final class ClassUtil {
 		}
 	}
 
-
+	/**
+	 * <b>2つのクラスが親子関係かをチェックするメソッド</b>
+	 * <p>
+	 * 子クラスからスーパークラスの方向に探索していきます。<br>
+	 * 探索している途中で、指定されている親クラスを見つけるとTRUEを返すようとなります。<br>
+	 * Objectまで探索しても見つからない場合は、親子関係ではないと判断され、FALSEを返します。<br>
+	 * 例１： ArrayListとListは親子関係である
+	 * 例２： ArrayListとMapは親子関係ではない
+	 * </p>
+	 *
+	 * @param child 子クラスとなっている型クラス
+	 * @param parent 親クラスとなっている型クラス
+	 * @return
+	 */
 	@SuppressWarnings("null")
 	public static boolean isParent(@Nonnull final Class<?> child, @Nonnull final Class<?> parent) {
 		if(child.equals(Object.class)) {
@@ -81,6 +116,16 @@ public final class ClassUtil {
 		return false;
 	}
 
+	/**
+	 * <b>継承元クラスのリストを取得するメソッド</b>
+	 * <p>
+	 * 指定された型クラスの親クラスとインタフェイスのリストを列挙したListを返します。<br>
+	 * 親がObjectのみ（POJOなど）の場合、Object.classだけのリストが返されます。<br>
+	 * </p>
+	 *
+	 * @param clazz 取得したい型クラス
+	 * @return 継承元クラスのリスト
+	 */
 	@Nonnull
 	public static List<Class<?>> getAncestors(@Nonnull final Class<?> clazz) {
 		final List<Class<?>> ancestorList = new ArrayList<>();
@@ -93,7 +138,16 @@ public final class ClassUtil {
 		return ancestorList;
 	}
 
-
+	/**
+	 * <b>フィールドの実クラスの型を取得するメソッド</b>
+	 * <p>
+	 * ListやMapなどのジェネリック化されたフィールドで指定されている型を取得する際に使用するメソッドです。<br>
+	 * 通常のフィールドであれば、そのクラスの型で返します。<br>
+	 * </p>
+	 *
+	 * @param field 実クラスを取得したいフィールド
+	 * @return 実クラスの配列
+	 */
 	@Nonnull
 	public static Class<?>[] getActualTypeArguments(@Nonnull final Field field) {
 		final Type fieldGenericType = field.getGenericType();
@@ -106,4 +160,16 @@ public final class ClassUtil {
 				.toArray(Class<?>[]::new);
 	}
 
+	/**
+	 * <b>実装クラスか確認するメソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param clazz
+	 * @return
+	 */
+	public static boolean isImplementationClass(@Nonnull final Class<?> clazz) {
+		return clazz.isInterface()
+				|| Modifier.isAbstract(clazz.getModifiers());
+	}
 }

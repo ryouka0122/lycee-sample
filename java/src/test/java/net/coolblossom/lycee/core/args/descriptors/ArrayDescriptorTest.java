@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.descriptor;
+package net.coolblossom.lycee.core.args.descriptors;
 
 import java.lang.reflect.Field;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.descriptors.ArrayDescriptor;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
 
 public class ArrayDescriptorTest {

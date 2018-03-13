@@ -6,33 +6,25 @@ import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
+/**
+ * <b>プリミティブ型の変換処理クラス</b>
+ * <p>
+ * </p>
+ * @author ryouka
+ *
+ */
 public class PrimitiveConvertor extends Convertor {
 
-	/*
-	@SuppressWarnings("null")
-	@Nonnull
-	private static final Map<Class<?>, Function<String, Object>>
-	PRIMITIVE_CONVERT_MAP = ImmutableMap.<Class<?>, Function<String,Object>>builder()
-	.put(boolean.class, Boolean::getBoolean)
-	.put(char.class, str -> str.indexOf(0))
-	.put(byte.class, Byte::parseByte)
-	.put(short.class, Short::parseShort)
-	.put(int.class, Integer::parseInt)
-	.put(long.class, Long::parseLong)
-	.put(float.class, Float::parseFloat)
-	.put(double.class, Double::parseDouble)
-	.build();
-	 */
-
+	/** 変換処理 */
 	@Nonnull
 	private final Function<String, Object> convertFunction;
 
+	/**
+	 * コンストラクタ
+	 * @param typeClass
+	 */
 	public PrimitiveConvertor(@Nonnull final Class<?> typeClass) {
 		super(typeClass);
-		//		if( !PRIMITIVE_CONVERT_MAP.containsKey(typeClass)) {
-		//			throw new LyceeRuntimeException("未定義のPrimitive型です["+typeClass.getName()+"]");
-		//		}
-		//		convertFunction = PRIMITIVE_CONVERT_MAP.get(typeClass);
 
 		if( char.class.equals(typeClass)) {
 			convertFunction = (value) -> value.charAt(0);

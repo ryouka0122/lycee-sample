@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.descriptor;
+package net.coolblossom.lycee.core.args.descriptors;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
 /**
- * <b></b>
+ * <b>コレクション用記述子</b>
  * <p>
  * </p>
  * @author ryouka

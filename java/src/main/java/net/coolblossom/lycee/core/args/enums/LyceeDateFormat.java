@@ -19,13 +19,17 @@ public enum LyceeDateFormat {
 	, SLASH_YYYY_MM_DD__HH_MM_SS("yyyy/MM/dd HH:mm:ss")
 	, DASH_YYYY_MM_DD("yyyy-MM-dd")
 	, DASH_YYYY_MM_DD__HH_MM_SS("yyyy-MM-dd HH:mm:ss")
-	, JAP_YYYY_MM_DD("yyyy年MM月dd日")
-	, JAP_YYYY_MM_DD__HH_MM_SS("yyyy年MM月dd日 HH時mm分ss秒")
+	, JPN_YYYY_MM_DD("yyyy年MM月dd日")
+	, JPN_YYYY_MM_DD__HH_MM_SS("yyyy年MM月dd日 HH時mm分ss秒")
 	;
 
 	@Nonnull
 	private String format;
 
+	/**
+	 * コンストラクタ
+	 * @param format
+	 */
 	private LyceeDateFormat(@Nonnull final String format) {
 		this.format = format;
 	}
