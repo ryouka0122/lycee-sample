@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +16,7 @@ import javassist.Modifier;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
 import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**
@@ -51,8 +53,11 @@ public class LyceeArgsMapExecutor<T> {
 	 * @param target マッピング先インスタンス
 	 * @param args 実行引数
 	 */
-	public LyceeArgsMapExecutor(@Nonnull final T target, @Nonnull final String args[]) {
+	public LyceeArgsMapExecutor(@Nonnull final T target, @Nullable final String args[]) {
 		this.target = target;
+		if(args==null || args.length==0) {
+			throw new LyceeRuntimeException("実行引数にnullや空配列を指定することはできません");
+		}
 		this.args = args;
 	}
 
@@ -73,10 +78,13 @@ public class LyceeArgsMapExecutor<T> {
 		}
 		// マッピングさせるキーのフォーマット
 		final Pattern keyPattern = Pattern.compile(DEFAULT_KEY_FORMAT_STRING);
-
 		for(int ki=0, vi=1 ; vi<args.length ; ki++, vi++) {
 			final String key = args[ki];
 			final String value = args[vi];
+
+			if(key==null || value==null) {
+				throw new IllegalArgumentException("argsにはnullの値を使用することができません。");
+			}
 
 			logger.info(String.format("verify %s=%s", key, value));
 
@@ -90,16 +98,21 @@ public class LyceeArgsMapExecutor<T> {
 			if(trimmedKey==null) {
 				throw new NullPointerException();
 			}
-			for(final FieldDescriptor desc : descriptors) {
-				if(desc.matches(trimmedKey)) {
-					logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
-					desc.set(target, value);
-					ki++;
-					vi++;
-					break;
-				}
-			}
 
+			try {
+				for(final FieldDescriptor desc : descriptors) {
+					if(desc.set(target, key, value)) {
+						logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
+						ki++;
+						vi++;
+						break;
+					}
+				}
+			}catch(final IllegalArgumentException | IllegalAccessException e) {
+				throw new LyceeRuntimeException(
+						String.format("オブジェクトへのマッピングに失敗しました[key=%s/value=%s]", key, value),
+						e);
+			}
 		}
 		return target;
 	}

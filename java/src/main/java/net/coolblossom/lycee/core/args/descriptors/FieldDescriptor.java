@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.convertors.Convertor;
@@ -40,10 +39,14 @@ public abstract class FieldDescriptor {
 	 * @param type フィールドの型クラス（配列の場合配列となっているクラス、ジェネリック型の場合、型パラメータとなっている実クラスの型）
 	 */
 	protected FieldDescriptor(@Nonnull final Field field, @Nonnull final Class<?> type) {
-		this.field = field;
+		this.field = verifyField(field);
 		convertor = LyceeArgsUtil.createConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
 		matchingNameList = makeNameList();
 	}
+
+	@Nonnull
+	abstract protected Field verifyField(@Nonnull Field field);
+
 
 	/**
 	 * <b>値をセットするメソッド</b>
@@ -52,8 +55,21 @@ public abstract class FieldDescriptor {
 	 *
 	 * @param obj セットする対象オブジェクト
 	 * @param value セットする値
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
-	abstract public void set(@Nonnull Object obj, @Nullable String value);
+	public boolean set(@Nonnull final Object obj, @Nonnull final String key, @Nonnull final String value)
+			throws IllegalArgumentException, IllegalAccessException {
+		if(matches(key)) {
+			setValue(obj, value);
+			return true;
+		}
+		return false;
+	}
+
+
+	abstract public void setValue(@Nonnull Object obj, @Nonnull String value)
+			throws IllegalArgumentException, IllegalAccessException;
 
 	/**
 	 *

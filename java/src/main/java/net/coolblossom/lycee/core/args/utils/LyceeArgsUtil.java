@@ -17,6 +17,7 @@ import net.coolblossom.lycee.core.args.descriptors.CollectionDescriptor;
 import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
 import net.coolblossom.lycee.core.args.descriptors.MapDescriptor;
 import net.coolblossom.lycee.core.args.descriptors.TypeDescriptor;
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
 /**
  *
@@ -77,5 +78,36 @@ public final class LyceeArgsUtil {
 	}
 
 
+	/**
+	 * <b>フィールドの型とアノテーションの型の継承チェック</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param containerType アノテーションの型
+	 * @param fieldType フィールドの型
+	 */
+	public static void verifyClassAndInheritance(@Nullable final Class<?> containerType, @Nonnull final Class<?> fieldType) {
+		if(containerType==null || containerType.equals(Object.class)) {
+			throw new LyceeRuntimeException("LyceeArgCollection#containerにインスタンス生成時の型を指定してください");
+		}
+		if(!ClassUtil.isParent(containerType, fieldType)) {
+			throw new LyceeRuntimeException(
+					String.format("LyceeArgCollection#containerにはフィールドの型と同じか継承した型を指定してください[field=%s / LyceeArgCollection#container=%s]",
+							fieldType.getName(), containerType.getName()));
+		}
+		if(!ClassUtil.isImplementationClass(containerType)) {
+			throw new LyceeRuntimeException(
+					String.format("LyceeArgCollection#containerにインタフェイスクラスや抽象クラスを指定することはできません[LyceeArgCollection#container=%s]", containerType.getName()));
+		}
+	}
+
+	@Nonnull
+	public static Field verifyField(@Nonnull final Field field, @Nonnull final Class<?> parent) {
+		if(!ClassUtil.isParent(field.getType(), parent)) {
+			throw new LyceeRuntimeException(
+					String.format("%s型のフィールドではありません[field=%s]", parent.getName(), field.getName()));
+		}
+		return field;
+	}
 
 }

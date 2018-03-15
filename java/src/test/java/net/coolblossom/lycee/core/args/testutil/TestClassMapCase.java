@@ -21,6 +21,6 @@ public class TestClassMapCase {
 	/** Map型 / 対応Descriptor：MapDescriptor / 対応Convertor：StringConvertor */
 	@LyceeArg
 	@LyceeArgCollection(HashMap.class)
-	protected Map<String, String> argStrMap;
+	public Map<String, String> argStrMap;
 
 }

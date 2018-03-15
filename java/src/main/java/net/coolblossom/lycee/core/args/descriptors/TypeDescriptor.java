@@ -3,11 +3,8 @@ package net.coolblossom.lycee.core.args.descriptors;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
-
-import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 
 /**
  *
@@ -29,6 +26,12 @@ public class TypeDescriptor extends FieldDescriptor {
 		super(field, type);
 	}
 
+	@Override
+	@Nonnull
+	protected Field verifyField(@Nonnull final Field field) {
+		return field;
+	}
+
 	/**
 	 *
 	 * <b>変換処理</b>
@@ -36,22 +39,17 @@ public class TypeDescriptor extends FieldDescriptor {
 	 * </p>
 	 *
 	 * @param str 引数値
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	@Override
-	public void set(final Object obj, @Nullable final String str) {
-		if(str==null) {
-			throw new NullPointerException();
-		}
-		try {
-			logger.info(String.format("field=%s / str=%s", field.getName(), str));
-			final Object value = convertor.convert(str);
+	public void setValue(@Nonnull final Object obj, @Nonnull final String str)
+			throws IllegalArgumentException, IllegalAccessException {
+		logger.info(String.format("field=%s / str=%s", field.getName(), str));
+		final Object value = convertor.convert(str);
 
-			field.set(obj, value);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new LyceeRuntimeException(
-					String.format("オブジェクトへのマッピングに失敗しました[field=%s/value=%s]", field.getName(), str),
-					e);
-		}
+		field.set(obj, value);
 	}
+
 
 }

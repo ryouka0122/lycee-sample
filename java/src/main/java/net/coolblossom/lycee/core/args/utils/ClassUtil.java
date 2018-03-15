@@ -169,7 +169,7 @@ public final class ClassUtil {
 	 * @return
 	 */
 	public static boolean isImplementationClass(@Nonnull final Class<?> clazz) {
-		return clazz.isInterface()
-				|| Modifier.isAbstract(clazz.getModifiers());
+		return !(clazz.isInterface()
+				|| Modifier.isAbstract(clazz.getModifiers()));
 	}
 }
