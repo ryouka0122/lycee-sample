@@ -6,13 +6,12 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import net.coolblossom.lycee.core.args.descriptors.ArrayDescriptor;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
 
 public class ArrayDescriptorTest {
 
 	@Test
-	public void test_standard_array() throws NoSuchFieldException, SecurityException {
+	public void test_standard_array() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
 		final String[] testData = {"A", "1", "2"};
 
@@ -37,7 +36,7 @@ public class ArrayDescriptorTest {
 
 		final ArrayDescriptor desc = new ArrayDescriptor(field, componentType);
 		for(final String data : testData) {
-			desc.set(testClass, data);
+			desc.set(testClass, fieldName, data);
 		}
 
 		System.out.println(Stream.of(testClass.strAry).collect(Collectors.joining(",")));
@@ -45,7 +44,7 @@ public class ArrayDescriptorTest {
 	}
 
 	@Test
-	public void test_class_array() throws NoSuchFieldException, SecurityException {
+	public void test_class_array() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
 		final String[] testData = {"A", "1", "2"};
 
@@ -70,7 +69,7 @@ public class ArrayDescriptorTest {
 
 		final ArrayDescriptor desc = new ArrayDescriptor(field, componentType);
 		for(final String data : testData) {
-			desc.set(testClass, data);
+			desc.set(testClass, fieldName, data);
 		}
 
 		System.out.println(Stream.of(testClass.clsAry)

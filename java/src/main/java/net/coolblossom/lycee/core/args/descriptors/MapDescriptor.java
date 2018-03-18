@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
-import net.coolblossom.lycee.core.args.utils.ClassUtil;
+import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**
  * <b>マップ用記述子</b>
@@ -31,27 +31,35 @@ public class MapDescriptor extends CollectableDescriptor {
 	 * @param actualType Map型の2つ目の型パラメータの型クラス
 	 */
 	public MapDescriptor(@Nonnull final Field field, @Nonnull final Class<?> actualType) {
-		super(verifyField(field), actualType);
-	}
-
-	@Nonnull
-	private static Field verifyField(@Nonnull final Field field) {
-		if( !ClassUtil.isParent(field.getType(), Map.class)) {
-			throw new LyceeRuntimeException(
-					String.format("Map型のフィールドではありません[field=%s]",field.getName()));
-		}
-		return field;
+		super(field, actualType);
 	}
 
 	@Override
-	public void set(final Object obj, final String value) {
-		try {
-			// TODO マッピング処理未実装
-			final Map map = (Map) field.get(obj);
-			throw new LyceeRuntimeException("Map型の処理は未実装です");
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new LyceeRuntimeException(e);
-		}
+	protected Field verifyField(final Field field) {
+		return LyceeArgsUtil.verifyField(field, Map.class);
+	}
+
+
+	@Override
+	public boolean matches(@Nonnull final String key) {
+		// Map型はすべて許容する
+		return true;
+	}
+
+	@Override
+	public boolean set(@Nonnull final Object obj, @Nonnull final String key, @Nonnull final String value)
+			throws IllegalArgumentException, IllegalAccessException {
+		final Map map = (Map) getFieldObject(obj);
+		map.put(key, convertor.convert(value));
+		field.set(obj, map);
+		return true;
+	}
+
+
+	@Override
+	public void setValue(@Nonnull final Object obj, @Nonnull final String value)
+			throws IllegalArgumentException, IllegalAccessException {
+		throw new LyceeRuntimeException("MapDescritptor#setValue()は使用できません");
 	}
 
 }

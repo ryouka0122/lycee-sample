@@ -4,10 +4,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
-import net.coolblossom.lycee.core.args.utils.ClassUtil;
+import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**
  * <b>コレクション用記述子</b>
@@ -24,37 +22,20 @@ public class CollectionDescriptor extends CollectableDescriptor {
 	 * @param actualType
 	 */
 	public CollectionDescriptor(@Nonnull final Field field, @Nonnull final Class<?> actualType) {
-		super(verifyField(field), actualType);
-	}
-
-	/**
-	 * <b></b>
-	 * <p>
-	 * </p>
-	 *
-	 * @param field
-	 * @return
-	 */
-	@Nonnull
-	private static Field verifyField(@Nonnull final Field field) {
-		if(!ClassUtil.isParent(field.getType(), Collection.class)) {
-			throw new LyceeRuntimeException(
-					String.format("Collection型のフィールドではありません[field=%s]",field.getName()));
-		}
-		return field;
+		super(field, actualType);
 	}
 
 	@Override
-	public void set(@Nonnull final Object obj, @Nullable final String value) {
-		try {
-			if(value!=null) {
-				final Collection coll = (Collection) getFieldObject(obj);
-				coll.add(convertor.convert(value));
-				field.set(obj, coll);
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new LyceeRuntimeException(e);
-		}
-
+	protected Field verifyField(final Field field) {
+		return LyceeArgsUtil.verifyField(field, Collection.class);
 	}
+
+	@Override
+	public void setValue(@Nonnull final Object obj, @Nonnull final String value)
+			throws IllegalArgumentException, IllegalAccessException {
+		final Collection coll = (Collection) getFieldObject(obj);
+		coll.add(convertor.convert(value));
+		field.set(obj, coll);
+	}
+
 }

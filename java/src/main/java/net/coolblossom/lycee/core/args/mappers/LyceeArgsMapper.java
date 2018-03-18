@@ -1,6 +1,7 @@
 package net.coolblossom.lycee.core.args.mappers;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
@@ -26,7 +27,7 @@ public class LyceeArgsMapper {
 	@Nonnull
 	public static <T> LyceeArgsMapExecutor<T> createAndMap(
 			@Nonnull final Class<T> clazz,
-			@Nonnull final String args[]
+			@Nullable final String args[]
 			) {
 		return map(ClassUtil.newInstance(clazz), args);
 	}
@@ -43,7 +44,7 @@ public class LyceeArgsMapper {
 	@Nonnull
 	public static <T> LyceeArgsMapExecutor<T> map(
 			@Nonnull final T target,
-			@Nonnull final String args[]
+			@Nullable final String args[]
 			) {
 		return new LyceeArgsMapExecutor<T>(target, args);
 	}

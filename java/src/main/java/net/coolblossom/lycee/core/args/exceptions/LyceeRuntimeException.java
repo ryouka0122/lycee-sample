@@ -16,14 +16,6 @@ public class LyceeRuntimeException extends RuntimeException {
 
 	/**
 	 * コンストラクタ
-	 * @param t 引継ぎする例外
-	 */
-	public LyceeRuntimeException(final Throwable t) {
-		super(t);
-	}
-
-	/**
-	 * コンストラクタ
 	 * @param message エラーメッセージ
 	 */
 	public LyceeRuntimeException(final String message) {

@@ -28,7 +28,7 @@ public final class ObjectUtil {
 	 * @return 非NULLオブジェクト
 	 */
 	@Nonnull
-	public static <T> T OrNullDefault(@Nullable final T object, @Nonnull final Supplier<T> supplier) {
+	public static <T> T orNullDefault(@Nullable final T object, @Nonnull final Supplier<T> supplier) {
 		if(object!=null) {
 			return object;
 		}
