@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import net.coolblossom.lycee.core.args.descriptors.CollectionDescriptor;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
@@ -15,7 +14,7 @@ public class CollectionDescriptorTest {
 
 
 	@Test
-	public void test_string_list() throws NoSuchFieldException, SecurityException {
+	public void test_string_list() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
 		final String[] testData = {"A", "1", "2"};
 
@@ -37,7 +36,7 @@ public class CollectionDescriptorTest {
 
 		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
 		for(final String data : testData) {
-			desc.set(testClass, data);
+			desc.set(testClass, fieldName, data);
 		}
 
 		System.out.println(testClass.strList.stream().collect(Collectors.joining(",")));
@@ -45,7 +44,7 @@ public class CollectionDescriptorTest {
 	}
 
 	@Test
-	public void test_integer_list() throws NoSuchFieldException, SecurityException {
+	public void test_integer_list() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
 		final String[] testData = {"0", "1", "2"};
 
@@ -67,7 +66,7 @@ public class CollectionDescriptorTest {
 
 		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
 		for(final String data : testData) {
-			desc.set(testClass, data);
+			desc.set(testClass, fieldName, data);
 		}
 
 		assertEquals(3, testClass.intList.size());
@@ -77,7 +76,7 @@ public class CollectionDescriptorTest {
 		// -> 0,1,2
 	}
 	@Test
-	public void test_character_list() throws NoSuchFieldException, SecurityException {
+	public void test_character_list() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
 		final String[] testData = "abbccddde".split("");
 
@@ -99,7 +98,7 @@ public class CollectionDescriptorTest {
 
 		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
 		for(final String data : testData) {
-			desc.set(testClass, data);
+			desc.set(testClass, fieldName, data);
 		}
 
 		assertEquals(5, testClass.charSet.size());

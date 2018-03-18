@@ -1,6 +1,7 @@
 package net.coolblossom.lycee.core.args.mappers;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +13,6 @@ import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
 
-import javassist.Modifier;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
 import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
@@ -101,7 +101,7 @@ public class LyceeArgsMapExecutor<T> {
 
 			try {
 				for(final FieldDescriptor desc : descriptors) {
-					if(desc.set(target, key, value)) {
+					if(desc.set(target, trimmedKey, value)) {
 						logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
 						ki++;
 						vi++;
