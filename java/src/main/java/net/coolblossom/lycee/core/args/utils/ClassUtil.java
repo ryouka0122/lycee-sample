@@ -29,29 +29,6 @@ public final class ClassUtil {
 	 * <b>インスタンス生成</b>
 	 * <p>
 	 * インスタンスを生成します。<br>
-	 * デフォルトコンストラクタが存在しない場合エラーとなります。（Integerなど）<br>
-	 * </p>
-	 *
-	 * @param clazz 生成したいインスタンスの型
-	 * @return 生成したインスタンス
-	 */
-	@Nonnull
-	public static <T> T newInstance(@Nonnull final Class<T> clazz) {
-		try {
-			final T obj = clazz.newInstance();
-			if(obj==null) {
-				throw new NullPointerException();
-			}
-			return obj;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new LyceeRuntimeException("インスタンス生成に失敗しました", e);
-		}
-	}
-
-	/**
-	 * <b>インスタンス生成</b>
-	 * <p>
-	 * インスタンスを生成します。<br>
 	 * 指定した引数の型で定義されているコンストラクタが存在しない場合エラーとなります。<br>
 	 * </p>
 	 *
@@ -60,13 +37,14 @@ public final class ClassUtil {
 	 * @return 生成したインスタンス
 	 */
 	@Nonnull
+	@SuppressWarnings("null")
 	public static <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
 		Constructor<T> ctor = null;
 		try {
 			final Class<?>[] ctorArgs = Stream.of(args)
 					.map(arg -> arg.getClass())
 					.toArray(Class<?>[]::new);
-			ctor = clazz.getConstructor(ctorArgs);
+			ctor = clazz.getDeclaredConstructor(ctorArgs);
 		}catch(final NoSuchMethodException e) {
 			throw new LyceeRuntimeException("該当するコンストラクタがありませんでした", e);
 		} catch (final SecurityException e) {
@@ -74,9 +52,6 @@ public final class ClassUtil {
 		}
 		try {
 			final T obj = ctor.newInstance(args);
-			if(obj==null) {
-				throw new NullPointerException();
-			}
 			return obj;
 		} catch (InstantiationException
 				| IllegalAccessException
@@ -155,7 +130,11 @@ public final class ClassUtil {
 		if( fieldGenericType instanceof Class) {
 			return new Class<?>[] { (Class<?>)fieldGenericType };
 		}
-		return Stream.of(((ParameterizedType)fieldGenericType).getActualTypeArguments())
+		return Stream.of(fieldGenericType)
+				.filter(type-> type instanceof ParameterizedType)
+				.flatMap(type -> {
+					return Stream.of( ((ParameterizedType)type).getActualTypeArguments() );
+				})
 				.filter(t-> t instanceof Class)
 				.toArray(Class<?>[]::new);
 	}

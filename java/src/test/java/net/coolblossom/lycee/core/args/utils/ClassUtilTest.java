@@ -1,18 +1,23 @@
 package net.coolblossom.lycee.core.args.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import net.coolblossom.lycee.core.args.annotations.LyceeArgCollection;
+import net.coolblossom.lycee.core.args.convertors.Convertor;
 import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.StringHolder;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
+import net.coolblossom.lycee.core.args.testutil.TestClassMapCase;
 import net.coolblossom.lycee.core.args.testutil.TestCodeEnum;
 
 /**
@@ -24,37 +29,72 @@ import net.coolblossom.lycee.core.args.testutil.TestCodeEnum;
  */
 public class ClassUtilTest {
 
-	static class TestCase {
+	@Test
+	public void test_newInstance_normal() {
+
+		final String resStr1 = ClassUtil.newInstance(String.class);
+		assertEquals("", resStr1);
+
+		final String resStr2 = ClassUtil.newInstance(String.class, "abc");
+		assertEquals("abc", resStr2);
+
+		final Integer resInt = ClassUtil.newInstance(Integer.class, "123");
+		assertEquals(123, resInt.intValue());
+
+		final List<?> resList = ClassUtil.newInstance(ArrayList.class);
+		assertEquals(ArrayList.class, resList.getClass());
+		assertEquals(0, resList.size());
+
+	}
+
+	@Test(expected=LyceeRuntimeException.class)
+	public void test_newInstance_no_constructor() {
+		// Integerクラスに対して存在しない「引数がDoubleのコンストラクタ」を呼び出す
+		ClassUtil.newInstance(Integer.class, 3.14);
+	}
+
+	@Test(expected=LyceeRuntimeException.class)
+	public void test_newInstance_private_constructor() {
+		ClassUtil.newInstance(StringUtil.class);
+	}
+
+	static class TestCase_getActualTypeArguments {
+		Class<?> testClazz;
 		String name;
 		Class<?> clazz[];
 		int actualTypeLength;
-		TestCase(final String name, final Class<?> ...clazz) {
+		TestCase_getActualTypeArguments(final Class<?> testClazz, final String name, final Class<?> ...clazz) {
+			this.testClazz = testClazz;
 			this.name = name;
 			this.clazz = clazz;
 			actualTypeLength = clazz.length;
 		}
+
+		Field getField() throws NoSuchFieldException, SecurityException {
+			return testClazz.getDeclaredField(name);
+		}
 	}
 
-	@SuppressWarnings("null")
 	@Test
+	@SuppressWarnings("null")
 	public void test_getActualTypeArguments() {
 		// テストケースの準備
 		Stream.of(
-				//  TestCase(fieldname, check type ...)
-				new TestCase("intArg" , Integer.class),
-				new TestCase("strArg" ,  String.class),
-				new TestCase("longArg",    long.class),
-				new TestCase("strList",  String.class),
-				new TestCase("intList", Integer.class),
-				new TestCase("strMap" ,  String.class,  String.class),
-				new TestCase("intMap" ,  String.class, Integer.class)
+				//  TestCase_getActualTypeArguments(testclass, fieldname, check type ...)
+				new TestCase_getActualTypeArguments(TestClass.class, "intArg" , Integer.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "strArg" ,  String.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "longArg",    long.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "strList",  String.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "intList", Integer.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "strMap" ,  String.class,  String.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "intMap" ,  String.class, Integer.class)
 				)
 		.forEach(testCase -> {
 			try {
 				// テスト実施
 				System.out.println(testCase.name + " / " + testCase.clazz);
 				// テストクラスから検証フィールド取得
-				final Field field = TestClass.class.getDeclaredField(testCase.name);
+				final Field field = testCase.getField();
 
 				// パラメータタイプのリストを取得
 				final Class<?>[] actualTypes = ClassUtil.getActualTypeArguments(field);
@@ -83,17 +123,17 @@ public class ClassUtilTest {
 
 		// テストケースの準備
 		Stream.of(
-				//  TestCase(fieldname, check type ...)
-				new TestCase("clsArg" ,   StringHolder.class),
-				new TestCase("clsList",   StringHolder.class),
-				new TestCase("clsMap" ,         String.class, StringHolder.class)
+				//  TestCase_getActualTypeArguments(testclass, fieldname, check type ...)
+				new TestCase_getActualTypeArguments(TestClass.class, "clsArg" ,   StringHolder.class),
+				new TestCase_getActualTypeArguments(TestClass.class, "clsList",   StringHolder.class),
+				new TestCase_getActualTypeArguments(TestClassMapCase.class, "argStrMap" ,  String.class, String.class)
 				)
 		.forEach(testCase -> {
 			try {
 				// テスト実施
 				System.out.println(testCase.name + " / " + testCase.clazz);
 				// テストクラスから検証フィールド取得
-				final Field field = TestClass.class.getDeclaredField(testCase.name);
+				final Field field = testCase.getField();
 
 				// パラメータタイプのリストを取得
 				final Class<?>[] actualTypes = ClassUtil.getActualTypeArguments(field);
@@ -130,45 +170,11 @@ public class ClassUtilTest {
 		.forEach(System.out::println);
 	}
 
-
-	@SuppressWarnings({ "rawtypes", "unchecked", "null" })
 	@Test
-	public void test_reflected_field_setter() throws Exception {
-		// 検証用データ
-		final String testData[] = {"AAA", "BBB", "CCC"};
-
-		final TestClass testClass = new TestClass();
-
-		// テストクラスから検証フィールド取得
-		final Field field = TestClass.class.getDeclaredField("clsList");
-		final LyceeArgCollection lyceeArgCollection = field.getDeclaredAnnotation(LyceeArgCollection.class);
-
-		field.setAccessible(true);
-
-		// パラメータタイプのリストを取得
-		final Class<?>[] actualTypes = ClassUtil.getActualTypeArguments(field);
-		final Class<?> actualClass = actualTypes[0];
-
-		for(final String data : testData) {
-			final Object object = ClassUtil.newInstance(actualClass, data);
-			System.out.println("create > " + object + "("+object.getClass()+")");
-			final Object trgObj = field.get(testClass);
-			Collection col=null;
-			if(trgObj==null) {
-				col = (Collection) lyceeArgCollection.value().newInstance();
-			}else if(trgObj instanceof Collection) {
-				col = (Collection)trgObj;
-			}else {
-				throw new Exception();
-			}
-			col.add(object);
-			field.set(testClass, col);
-		}
-		final Object list = field.get(testClass);
-		System.out.println(list.getClass()+":" + list);
-		for (final Object var: (Iterable)list ) {
-			System.out.println(var );
-		}
+	public void test_isImplemetntationClass() {
+		assertTrue(ClassUtil.isImplementationClass(String.class));
+		assertFalse(ClassUtil.isImplementationClass(List.class));
+		assertFalse(ClassUtil.isImplementationClass(Convertor.class));
 	}
 
 
