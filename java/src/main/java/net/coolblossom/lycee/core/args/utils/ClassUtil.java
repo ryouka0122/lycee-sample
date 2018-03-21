@@ -41,9 +41,12 @@ public final class ClassUtil {
 	public static <T> T newInstance(@Nonnull final Class<T> clazz, final Object ...args) {
 		Constructor<T> ctor = null;
 		try {
-			final Class<?>[] ctorArgs = Stream.of(args)
-					.map(arg -> arg.getClass())
-					.toArray(Class<?>[]::new);
+			Class<?>[] ctorArgs = null;
+			if(args!=null && args.length>0) {
+				ctorArgs = Stream.of(args)
+						.map(arg -> arg.getClass())
+						.toArray(Class<?>[]::new);
+			}
 			ctor = clazz.getDeclaredConstructor(ctorArgs);
 		}catch(final NoSuchMethodException e) {
 			throw new LyceeRuntimeException("該当するコンストラクタがありませんでした", e);

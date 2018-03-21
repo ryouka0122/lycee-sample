@@ -1,8 +1,8 @@
 package net.coolblossom.lycee.core.args.descriptors;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +31,7 @@ public abstract class FieldDescriptor {
 
 	/** マッピング用名称リスト（ここにある名前と同じ場合マッピングされる） */
 	@Nonnull
-	protected List<String> matchingNameList;
+	protected Set<String> matchingNameSet;
 
 	/**
 	 * コンストラクタ
@@ -41,7 +41,7 @@ public abstract class FieldDescriptor {
 	protected FieldDescriptor(@Nonnull final Field field, @Nonnull final Class<?> type) {
 		this.field = verifyField(field);
 		convertor = LyceeArgsUtil.createConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
-		matchingNameList = makeNameList();
+		matchingNameSet = makeNameSet();
 	}
 
 	@Nonnull
@@ -81,7 +81,7 @@ public abstract class FieldDescriptor {
 	 * @return マッチしていればTRUEを返す
 	 */
 	public boolean matches(@Nonnull final String key) {
-		return matchingNameList.contains(key);
+		return matchingNameSet.contains(key);
 	}
 
 	/**
@@ -96,8 +96,8 @@ public abstract class FieldDescriptor {
 	 * @return 名称リスト
 	 */
 	@Nonnull
-	private List<String> makeNameList() {
-		final List<String> result = new ArrayList<>();
+	private Set<String> makeNameSet() {
+		final Set<String> result = new HashSet<>();
 
 		String name = field.getName();
 		if(field.isAnnotationPresent(LyceeArg.class)) {

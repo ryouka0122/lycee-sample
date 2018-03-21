@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.apache.log4j.Logger;
+
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
@@ -24,6 +26,8 @@ import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
  *
  */
 public class MapDescriptor extends CollectableDescriptor {
+	private static final Logger logger = Logger.getLogger(MapDescriptor.class);
+
 
 	/**
 	 * コンストラクタ
@@ -49,6 +53,7 @@ public class MapDescriptor extends CollectableDescriptor {
 	@Override
 	public boolean set(@Nonnull final Object obj, @Nonnull final String key, @Nonnull final String value)
 			throws IllegalArgumentException, IllegalAccessException {
+		logger.info("key=" + key + " / value="+ value);
 		final Map map = (Map) getFieldObject(obj);
 		map.put(key, convertor.convert(value));
 		field.set(obj, map);

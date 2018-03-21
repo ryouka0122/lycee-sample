@@ -1,8 +1,15 @@
 package net.coolblossom.lycee.core;
 
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Field;
+
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.descriptors.MapDescriptor;
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
+import net.coolblossom.lycee.core.args.testutil.TestClassMapCase;
 
 /**
  * <b>カバレッジ用テストケース</b>
@@ -18,6 +25,18 @@ public class JunkTest {
 	public void test_public_constructor() {
 		// for LyceeArgsMapper#LyceeArgsMapper()
 		new LyceeArgsMapper();
+	}
+
+	@Test(expected=LyceeRuntimeException.class)
+	public void test_MapDescriptor() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		final TestClassMapCase testClass = new TestClassMapCase();
+		final Field field = TestClassMapCase.class.getDeclaredField("argStrMap");
+		field.setAccessible(true);
+		final MapDescriptor desc = new MapDescriptor(field, String.class);
+		assertTrue(desc.matches(""));
+		assertTrue(desc.matches("A"));
+		assertTrue(desc.matches("1"));
+		desc.setValue(testClass, "value");
 	}
 
 
