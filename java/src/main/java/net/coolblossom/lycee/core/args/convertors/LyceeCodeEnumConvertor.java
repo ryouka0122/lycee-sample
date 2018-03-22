@@ -28,14 +28,18 @@ public class LyceeCodeEnumConvertor extends Convertor {
 	 */
 	public LyceeCodeEnumConvertor(@Nonnull final Class<?> typeClass) {
 		super(typeClass);
+		valueList = (LyceeCodeEnum[]) typeClass.getEnumConstants();
+	}
 
+	@Override
+	@Nonnull
+	protected Class<?> verifyType(@Nonnull final Class<?> typeClass) {
 		if( !ClassUtil.isParent(typeClass, LyceeCodeEnum.class) ) {
 			throw new LyceeRuntimeException("LyceeCodeEnumが継承されていません。[class="+typeClass.getName()+"]");
 		}
-
-		valueList = (LyceeCodeEnum[]) typeClass.getEnumConstants();
-
+		return typeClass;
 	}
+
 
 	@Override
 	@Nonnull
