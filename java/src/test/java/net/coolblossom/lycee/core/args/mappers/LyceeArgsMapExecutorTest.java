@@ -1,10 +1,10 @@
 package net.coolblossom.lycee.core.args.mappers;
 
+import static net.coolblossom.lycee.core.TestClassHelper.isNull;
+import static net.coolblossom.lycee.core.TestClassHelper.isValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Field;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -14,6 +14,7 @@ import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.TestClassAnnotation;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
 import net.coolblossom.lycee.core.commons.collect.Tuple;
+import net.coolblossom.lycee.core.evals.Evaluator;
 
 public class LyceeArgsMapExecutorTest {
 
@@ -48,21 +49,13 @@ public class LyceeArgsMapExecutorTest {
 
 	static class TestCaseConfiguratedAnnotation {
 		String field;
-		Consumer<String> expected;
+		Evaluator expected;
 		String[] args;
-		public TestCaseConfiguratedAnnotation(final String field, final Consumer<String> expected, final String ...args) {
+		public TestCaseConfiguratedAnnotation(final String field, final Evaluator expected, final String ...args) {
 			this.field = field;
 			this.expected = expected;
 			this.args = args;
 		}
-	}
-
-	private Consumer<String> isNull() {
-		return (v) -> assertNull(v);
-	}
-
-	private Consumer<String> isValue(final String expected) {
-		return (v) -> assertEquals(expected, v);
 	}
 
 	@Test
@@ -111,7 +104,7 @@ public class LyceeArgsMapExecutorTest {
 		.forEach(test -> {
 			final TestClassAnnotation actual = LyceeArgsMapper.createAndMap(TestClassAnnotation.class, test.args).execute();
 
-			test.expected.accept(TestClassHelper.getFieldValue(actual, test.field));
+			test.expected.invoke(TestClassHelper.getFieldValue(actual, test.field));
 		});
 
 	}
@@ -144,8 +137,8 @@ public class LyceeArgsMapExecutorTest {
 				,Tuple.make("argStr9", isValue("I"))
 				)
 		.forEach(expected -> {
-			final Consumer<String> assertor = expected.get(1);
-			assertor.accept( TestClassHelper.getFieldValue(actual, expected.get(0)) );
+			final Evaluator evaluator = expected.get(1);
+			evaluator.invoke(TestClassHelper.getFieldValue(actual, expected.get(0)) );
 		});
 
 	}
