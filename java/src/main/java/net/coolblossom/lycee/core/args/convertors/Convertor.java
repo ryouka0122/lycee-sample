@@ -16,8 +16,22 @@ public abstract class Convertor {
 	protected Class<?> typeClass;
 
 	protected Convertor(@Nonnull final Class<?> typeClass) {
-		this.typeClass = typeClass;
+		this.typeClass = verifyType(typeClass);
 	}
+
+	/**
+	 * <b>型の検証</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param typeClass
+	 * @return
+	 */
+	@Nonnull
+	protected Class<?> verifyType(@Nonnull final Class<?> typeClass) {
+		return typeClass;
+	}
+
 
 	/**
 	 * <b>変換処理</b>
