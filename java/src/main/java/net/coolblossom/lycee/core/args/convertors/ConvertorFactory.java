@@ -95,6 +95,8 @@ public class ConvertorFactory {
 			return new WrapperConvertor(clazz, str->str.charAt(0));
 		}else if(java.util.Date.class.equals(clazz)) {
 			return new DateConvertor(clazz, lyceeArg!=null ? lyceeArg.dateFormat() : LyceeDateFormat.COMPACT_YYYY_MM_DD);
+		}else if(String.class.equals(clazz)) {
+			return new StringConvertor(clazz);
 		}
 
 		final Class<Convertor> convertor = convertorMap.get(clazz);

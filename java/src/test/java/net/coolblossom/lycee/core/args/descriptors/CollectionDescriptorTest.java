@@ -3,10 +3,12 @@ package net.coolblossom.lycee.core.args.descriptors;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.TestClass;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
 
@@ -75,6 +77,7 @@ public class CollectionDescriptorTest {
 		}
 		// -> 0,1,2
 	}
+
 	@Test
 	public void test_character_list() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// 投入するデータ
@@ -108,5 +111,17 @@ public class CollectionDescriptorTest {
 				.collect(Collectors.joining(",")));
 		// -> a,b,c,d,e
 	}
+
+	static public class TestClassNoAnnotation {
+		List<String> argList;
+	}
+
+	@Test(expected=LyceeRuntimeException.class)
+	public void test_no_annotation() throws ReflectiveOperationException {
+		new CollectionDescriptor(
+				TestClassNoAnnotation.class.getDeclaredField("argList"),
+				String.class);
+	}
+
 
 }

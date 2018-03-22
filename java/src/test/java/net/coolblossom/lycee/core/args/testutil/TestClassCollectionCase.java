@@ -40,6 +40,10 @@ public class TestClassCollectionCase {
 	@LyceeArg
 	protected String[] argStrArray;
 
+	/** 配列型 / 対応Descriptor：ArrayDescriptor / 対応Convertor：DefaultConvertor */
+	@LyceeArg
+	protected StringHolder[] argClsArray;
+
 	// ------------------------------------------------------------
 	// Collection型
 	//
