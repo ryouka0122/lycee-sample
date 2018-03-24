@@ -25,6 +25,15 @@ public class EnumConvertor extends Convertor {
 
 	@Override
 	@Nonnull
+	protected Class<?> verifyType(@Nonnull final Class<?> typeClass) {
+		if(!typeClass.isEnum()) {
+			throw new LyceeRuntimeException("列挙型ではありません。[class="+typeClass.getName()+"]");
+		}
+		return typeClass;
+	}
+
+	@Override
+	@Nonnull
 	public Object convert(@Nonnull final String str) {
 		return Stream.of(typeClass.getEnumConstants())
 				.filter(enumValue -> enumValue.toString().equals(str))

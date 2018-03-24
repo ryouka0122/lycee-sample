@@ -13,10 +13,9 @@ public class StringConvertor extends Convertor {
 
 	/**
 	 * コンストラクタ
-	 * @param typeClass
 	 */
-	public StringConvertor(@Nonnull final Class<?> typeClass) {
-		super(typeClass);
+	public StringConvertor() {
+		super(String.class);
 	}
 
 	@Override

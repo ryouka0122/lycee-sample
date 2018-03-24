@@ -12,4 +12,16 @@ public class StringHolder {
 	public String toString() {
 		return value;
 	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if(this==obj) {
+			return true;
+		}
+		if( !(obj instanceof StringHolder) ) {
+			return false;
+		}
+		final StringHolder holder = (StringHolder)obj;
+		return value.equals(holder.value);
+	}
 }

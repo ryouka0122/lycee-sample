@@ -1,10 +1,10 @@
 package net.coolblossom.lycee.core.args.mappers;
 
+import static net.coolblossom.lycee.core.TestClassHelper.isNull;
+import static net.coolblossom.lycee.core.TestClassHelper.isValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Field;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -13,6 +13,8 @@ import net.coolblossom.lycee.core.TestClassHelper;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.TestClassAnnotation;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
+import net.coolblossom.lycee.core.commons.collect.Tuple;
+import net.coolblossom.lycee.core.evals.Evaluator;
 
 public class LyceeArgsMapExecutorTest {
 
@@ -47,26 +49,19 @@ public class LyceeArgsMapExecutorTest {
 
 	static class TestCaseConfiguratedAnnotation {
 		String field;
-		Consumer<String> expected;
+		Evaluator expected;
 		String[] args;
-		public TestCaseConfiguratedAnnotation(final String field, final Consumer<String> expected, final String ...args) {
+		public TestCaseConfiguratedAnnotation(final String field, final Evaluator expected, final String ...args) {
 			this.field = field;
 			this.expected = expected;
 			this.args = args;
 		}
 	}
 
-	private Consumer<String> isNull() {
-		return (v) -> assertNull(v);
-	}
-
-	private Consumer<String> isValue(final String expected) {
-		return (v) -> assertEquals(expected, v);
-	}
-
 	@Test
 	public void test_configuratedAnnotation_field() {
 		Stream.of(
+				//                                  field name, validation,  arguments...
 				// argStr1のテスト（デグレ観点）
 				new TestCaseConfiguratedAnnotation("argStr1", isValue("1"), "--argStr1", "1")
 
@@ -105,12 +100,11 @@ public class LyceeArgsMapExecutorTest {
 				,new TestCaseConfiguratedAnnotation("argStr9", isValue("9"), "--argStr9", "9")
 				,new TestCaseConfiguratedAnnotation("argStr9", isNull()    , "--arg9"   , "9")
 				,new TestCaseConfiguratedAnnotation("argStr9", isNull()    , "--param"  , "9")
-
 				)
 		.forEach(test -> {
 			final TestClassAnnotation actual = LyceeArgsMapper.createAndMap(TestClassAnnotation.class, test.args).execute();
 
-			test.expected.accept(TestClassHelper.getFieldValue(actual, test.field));
+			test.expected.invoke(TestClassHelper.getFieldValue(actual, test.field));
 		});
 
 	}
@@ -119,15 +113,33 @@ public class LyceeArgsMapExecutorTest {
 	public void test_configuratedAnnotation_full() {
 		final String[] args = {
 				"--argStr1", "A",
-				"--argStr2", "B",
+				"--arg2"   , "B",
 				"--argStr3", "C",
-				"--argStr4", "D",
+				"--arg4"   , "D",
 				"--argStr5", "E",
-				"--argStr6", "F",
+				"--arg6"   , "F",
 				"--argStr7", "G",
-				"--argStr8", "H",
+				"--arg8"   , "H",
 				"--argStr9", "I",
 		};
+
+		final TestClassAnnotation actual = LyceeArgsMapper.createAndMap(TestClassAnnotation.class, args).execute();
+
+		Stream.of(
+				Tuple.make("argStr1", isValue("A"))
+				,Tuple.make("argStr2", isValue("B"))
+				,Tuple.make("argStr3", isValue("C"))
+				,Tuple.make("argStr4", isValue("D"))
+				,Tuple.make("argStr5", isValue("E"))
+				,Tuple.make("argStr6", isValue("F"))
+				,Tuple.make("argStr7", isValue("G"))
+				,Tuple.make("argStr8", isValue("H"))
+				,Tuple.make("argStr9", isValue("I"))
+				)
+		.forEach(expected -> {
+			final Evaluator evaluator = expected.get(1);
+			evaluator.invoke(TestClassHelper.getFieldValue(actual, expected.get(0)) );
+		});
 
 	}
 }
