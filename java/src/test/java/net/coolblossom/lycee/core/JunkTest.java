@@ -48,6 +48,12 @@ public class JunkTest {
 		assertEquals("yyyyMMdd", ldf.toString());
 	}
 
+	@Test
+	public void test_LyceeRuntimeException() {
+		final String message = "Error Message";
+		final LyceeRuntimeException e = new LyceeRuntimeException(message);
+		assertEquals(message, e.getMessage());
+	}
 
 
 }
