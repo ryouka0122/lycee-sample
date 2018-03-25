@@ -22,11 +22,10 @@ public class DateConvertor extends Convertor {
 
 	/**
 	 * コンストラクタ
-	 * @param typeClass
 	 * @param dateFormat
 	 */
-	public DateConvertor(@Nonnull final Class<?> typeClass, @Nonnull final LyceeDateFormat dateFormat) {
-		super(typeClass);
+	public DateConvertor(@Nonnull final LyceeDateFormat dateFormat) {
+		super(java.util.Date.class);
 		this.dateFormat = dateFormat;
 	}
 

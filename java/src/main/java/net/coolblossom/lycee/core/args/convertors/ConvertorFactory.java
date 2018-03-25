@@ -94,7 +94,7 @@ public class ConvertorFactory {
 			// それ以外のWrapperはDefaultConvertorで対応可能
 			return new WrapperConvertor(clazz, str->str.charAt(0));
 		}else if(java.util.Date.class.equals(clazz)) {
-			return new DateConvertor(clazz, lyceeArg!=null ? lyceeArg.dateFormat() : LyceeDateFormat.COMPACT_YYYY_MM_DD);
+			return new DateConvertor(lyceeArg!=null ? lyceeArg.dateFormat() : LyceeDateFormat.COMPACT_YYYY_MM_DD);
 		}else if(String.class.equals(clazz)) {
 			return new StringConvertor();
 		}
