@@ -1,6 +1,7 @@
 package net.coolblossom.lycee.core.args.enums;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -52,9 +53,12 @@ public enum LyceeDateFormat {
 	@Nonnull
 	public Date convert(@Nonnull final String date) throws ParseException {
 		final SimpleDateFormat sdf = new SimpleDateFormat(format);
+		sdf.setLenient(false);
+		final ParsePosition pos = new ParsePosition(0);
+
 		final Date result = sdf.parse(date);
-		if(result==null) {
-			throw new NullPointerException();
+		if( !sdf.format(result).equals(date)) {
+			throw new ParseException("日付けの変換処理に失敗しました", pos.getErrorIndex());
 		}
 		return result;
 	}

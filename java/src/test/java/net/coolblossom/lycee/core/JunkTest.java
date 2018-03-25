@@ -1,5 +1,6 @@
 package net.coolblossom.lycee.core;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -7,6 +8,7 @@ import java.lang.reflect.Field;
 import org.junit.Test;
 
 import net.coolblossom.lycee.core.args.descriptors.MapDescriptor;
+import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
 import net.coolblossom.lycee.core.args.testutil.TestClassMapCase;
@@ -38,6 +40,14 @@ public class JunkTest {
 		assertTrue(desc.matches("1"));
 		desc.setValue(testClass, "value");
 	}
+
+	@Test
+	public void test_LyceeDateFormat() {
+		final LyceeDateFormat ldf = LyceeDateFormat.COMPACT_YYYY_MM_DD;
+		assertEquals("yyyyMMdd", ldf.getFormat());
+		assertEquals("yyyyMMdd", ldf.toString());
+	}
+
 
 
 }
