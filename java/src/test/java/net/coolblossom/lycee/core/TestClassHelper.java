@@ -71,6 +71,16 @@ public class TestClassHelper {
 		}
 	}
 
+	public static int getIntField(final Object test, final String name)  {
+		try {
+			final Field field = test.getClass().getDeclaredField(name);
+			field.setAccessible(true);
+			return field.getInt(test);
+		}catch(final ReflectiveOperationException e) {
+			// to Uncheckable
+			throw new RuntimeException(e);
+		}
+	}
 
 	static public Evaluator isNull() {
 		return (v) -> assertNull(v);
