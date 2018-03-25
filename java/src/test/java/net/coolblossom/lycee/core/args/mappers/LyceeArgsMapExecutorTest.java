@@ -3,8 +3,9 @@ package net.coolblossom.lycee.core.args.mappers;
 import static net.coolblossom.lycee.core.TestClassHelper.isNull;
 import static net.coolblossom.lycee.core.TestClassHelper.isValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
-import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -12,38 +13,97 @@ import org.junit.Test;
 import net.coolblossom.lycee.core.TestClassHelper;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.TestClassAnnotation;
+import net.coolblossom.lycee.core.args.testutil.TestClassModifier;
+import net.coolblossom.lycee.core.args.testutil.TestClassNoAnnotation;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
+import net.coolblossom.lycee.core.args.testutil.TestClassTypeAnnotation;
 import net.coolblossom.lycee.core.commons.collect.Tuple;
 import net.coolblossom.lycee.core.evals.Evaluator;
 
 public class LyceeArgsMapExecutorTest {
 
-	static int getIntField(final Object test, final String name) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final Field field = test.getClass().getDeclaredField(name);
-		field.setAccessible(true);
-		return field.getInt(test);
-	}
 
 	@Test
-	public void test_normal() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final String[] args = { "--argInt", "1" };
+	public void test_args_normal() {
+		final String[] args = { "--argInt", "1", "--argStr", "AAA" };
 
 		final TestClassSimpleCase test = LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
 
-		assertEquals(1, getIntField(test, "argInt"));
-
+		assertEquals(1, TestClassHelper.getIntField(test, "argInt"));
+		assertEquals("AAA", TestClassHelper.getFieldValue(test, "argStr"));
 	}
 
-	@Test(expected=LyceeRuntimeException.class)
-	public void test_nonargs() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final String[] args = {};
-		LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+
+	static class TestClassArgsVariation {
+		String args[];
+		Evaluator expectedInt;
+		Evaluator expectedStr;
+
+		public TestClassArgsVariation(final Evaluator evalArgInt, final Evaluator evalArgStr, final String ...args) {
+			expectedInt = evalArgInt;
+			expectedStr = evalArgStr;
+			this.args = args;
+		}
+
+		public void test() {
+			final TestClassSimpleCase test = LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+
+			expectedInt.invoke(TestClassHelper.getFieldValue(test, "argInt"));
+			expectedStr.invoke(TestClassHelper.getFieldValue(test, "argStr"));
+		}
 	}
 
-	@Test(expected=LyceeRuntimeException.class)
-	public void test_nullargs() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final String[] args = null;
-		LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+	@Test
+	public void test_args_variation() {
+		Stream.of(
+				new TestClassArgsVariation(isValue(1), isValue("AAA"), "--argInt", "1", "--argStr", "AAA" ),	// 正常
+				new TestClassArgsVariation(isValue(1), isNull()      , "--argInt", "1", "--argStr"        ),	// 2つ目の値が欠損
+				new TestClassArgsVariation(isValue(1), isNull()      , "--argInt", "1",             "AAA" ),	// 2つ目のキーが欠損
+				new TestClassArgsVariation(isValue(0), isValue("AAA"),             "1", "--argStr", "AAA" ),	// 1つ目のキーが欠損
+				new TestClassArgsVariation(isValue(0), isNull()      , "--argInt"                         ),	// 1つ目のキーしかない
+				new TestClassArgsVariation(isValue(0), isNull()      ,             "1"                    ),	// キーなし
+				new TestClassArgsVariation(isValue(0), isNull()      ,             "1",             "AAA" ),	// キーなし（複数）
+				new TestClassArgsVariation(isValue(1), isNull()      , "--argInt", "1",   "argStr", "AAA" ),	// キーになっていない
+				new TestClassArgsVariation(isValue(0), isNull()      ,   "argInt", "1",   "argStr", "AAA" )		// キーになっていない（複数）
+				)
+		.forEach(TestClassArgsVariation::test);
+	}
+
+
+	@Test()
+	public void test_args_illegal() throws ReflectiveOperationException {
+		Stream.of(
+				new String[]{ },
+				null
+				)
+		.forEach(args -> {
+			try {
+				LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+				fail();
+			}catch(final LyceeRuntimeException e) {
+				// success
+			}
+		});
+	}
+
+	@Test
+	public void test_args_null_variation() {
+		Stream.of(
+				new String[]{"--argInt", null, },
+				new String[]{"--argInt",  "1", "--argLong",  null, },
+				new String[]{"--argInt", null, "--argLong", "100", },
+				new String[]{"--argInt",  "1",        null, "100", },
+				new String[]{      null, "1", "--argLong", "100", },
+				new String[]{ null, null, null, null, }
+				)
+		.forEach(args -> {
+			try {
+				LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+				fail();
+			}catch(final IllegalArgumentException e) {
+				// success
+			}
+		});
 	}
 
 
@@ -62,7 +122,7 @@ public class LyceeArgsMapExecutorTest {
 	public void test_configuratedAnnotation_field() {
 		Stream.of(
 				//                                  field name, validation,  arguments...
-				// argStr1のテスト（デグレ観点）
+				// argStr1のテスト
 				new TestCaseConfiguratedAnnotation("argStr1", isValue("1"), "--argStr1", "1")
 
 				// argStr2のテスト
@@ -140,6 +200,81 @@ public class LyceeArgsMapExecutorTest {
 			final Evaluator evaluator = expected.get(1);
 			evaluator.invoke(TestClassHelper.getFieldValue(actual, expected.get(0)) );
 		});
-
 	}
+
+	@Test
+	public void test_type_annotation() {
+		final String[] args = {
+				"--argInt", "1",
+				"--argLong", "100",
+				"--argStr", "a",
+				"--argChar", "A",
+				"--argDouble", "0.001",
+		};
+
+		final TestClassTypeAnnotation actual = LyceeArgsMapper.createAndMap(
+				TestClassTypeAnnotation.class, args).execute();
+		Stream.of(
+				Tuple.make("argInt", isValue(1))
+				,Tuple.make("argLong", isValue(100L))
+				,Tuple.make("argStr", isValue("a"))
+				,Tuple.make("argChar", isValue('A'))
+				,Tuple.make("argDouble", isValue(0.001))
+				)
+		.forEach(expected -> {
+			final Evaluator evaluator = expected.get(1);
+			evaluator.invoke(TestClassHelper.getFieldValue(actual, expected.get(0)) );
+		});
+	}
+
+	@Test
+	public void test_no_annotation() {
+		final String[] args = {
+				"--arg1", "1",
+				"--arg2", "2",
+		};
+		final TestClassNoAnnotation actual = LyceeArgsMapper.createAndMap(TestClassNoAnnotation.class, args).execute();
+
+		Stream.of(
+				Tuple.make("arg1", isValue(100))
+				,Tuple.make("arg2", isValue(100))
+				)
+		.forEach(expected -> {
+			final Evaluator evaluator = expected.get(1);
+			evaluator.invoke(TestClassHelper.getFieldValue(actual, expected.get(0)) );
+		});
+	}
+
+	@Test
+	public void test_modifier_normal() {
+		Stream.of(
+				Tuple.make(TestClassModifier.TestClassPublic.class, "argPublic"),
+				Tuple.make(TestClassModifier.TestClassProtected.class, "argProtected")
+				)
+		.forEach(tuple-> {
+			final String name = tuple.get(1);
+			final String[] args = { "--" + name, "1" };
+			final Object actual = LyceeArgsMapper.createAndMap(tuple.get(0), args).execute();
+			assertEquals(0, TestClassHelper.getIntField(actual, name));
+		});
+	}
+
+	@Test
+	public void test_modifier_illegal() {
+		Stream.of(
+				Tuple.make(TestClassModifier.TestClassPackage.class, "argPackage"),
+				Tuple.make(TestClassModifier.TestClassPackageFinal.class, "argPackageFinal"),
+				Tuple.make(TestClassModifier.TestClassPublicFinal.class, "argPublicFinal"),
+				Tuple.make(TestClassModifier.TestClassProtectedFinal.class, "argProtectedFinal"),
+				Tuple.make(TestClassModifier.TestClassPrivate.class, "argPrivate"),
+				Tuple.make(TestClassModifier.TestClassPrivateFinal.class, "argPrivateFinal")
+				)
+		.forEach(tuple-> {
+			final String name = tuple.get(1);
+			final String[] args = { "--" + name, "1" };
+			final Object actual = LyceeArgsMapper.createAndMap(tuple.get(0), args).execute();
+			assertNotEquals(1, TestClassHelper.getIntField(actual, name));
+		});
+	}
+
 }

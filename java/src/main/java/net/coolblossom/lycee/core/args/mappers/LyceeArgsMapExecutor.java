@@ -96,6 +96,7 @@ public class LyceeArgsMapExecutor<T> {
 
 			final String trimmedKey = matcher.group(1);
 			if(trimmedKey==null) {
+				// フォーマットが指定できるようになるとこのケースが発生する
 				throw new NullPointerException();
 			}
 
