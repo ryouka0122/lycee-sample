@@ -29,9 +29,6 @@ public class ConvertorFactory {
 	/** ロガー */
 	private static Logger logger = Logger.getLogger(ConvertorFactory.class);
 
-	/** Singletonインスタンス */
-	private static ConvertorFactory theInstance = null;
-
 	@Nonnull
 	private final Map<Class<?>, Class<? extends Convertor>> convertorMap;
 
@@ -43,13 +40,9 @@ public class ConvertorFactory {
 	 *
 	 * @return ConvertorFactoryのインスタンス
 	 */
-	@SuppressWarnings("null")
 	@Nonnull
 	public static synchronized ConvertorFactory getInstance() {
-		if(theInstance==null) {
-			theInstance = new ConvertorFactory();
-		}
-		return theInstance;
+		return new ConvertorFactory();
 	}
 
 	protected ConvertorFactory() {
@@ -65,6 +58,9 @@ public class ConvertorFactory {
 	 * @param convertorClass 変換処理クラス
 	 */
 	public synchronized void addConvertor(@Nonnull final Class<?> baseClass, @Nonnull final Class<? extends Convertor> convertorClass) {
+		if(baseClass==null || convertorClass==null) {
+			throw new NullPointerException();
+		}
 		convertorMap.put(baseClass, convertorClass);
 	}
 

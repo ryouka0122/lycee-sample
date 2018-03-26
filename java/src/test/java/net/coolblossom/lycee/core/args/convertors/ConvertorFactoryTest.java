@@ -1,36 +1,101 @@
 package net.coolblossom.lycee.core.args.convertors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
+import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
+import net.coolblossom.lycee.core.args.testutil.StringHolder;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
 import net.coolblossom.lycee.core.args.testutil.TestClassTypeAnnotation;
+import net.coolblossom.lycee.core.commons.collect.Tuple;
 
 public class ConvertorFactoryTest {
 
-	@Before
-	public void beforeTest() {
-		ConvertorFactory.getInstance().removeAllConvertor();
-		;
+	public static class UpperConvertor extends Convertor {
+
+		public UpperConvertor(final Class<?> clazz, final LyceeArg lyceeArg) {
+			super(String.class);
+		}
+
+		@Override
+		public Object convert(final String str) {
+			return str.toUpperCase();
+		}
+
 	}
+
+	public static class LowerConvertor extends Convertor {
+
+		public LowerConvertor(final LyceeArg lyceeArg) {
+			super(String.class);
+		}
+
+		@Override
+		public Object convert(final String str) {
+			return str.toLowerCase();
+		}
+
+	}
+
 
 	@Test
 	public void test_singleton() {
 		final ConvertorFactory factory1 = ConvertorFactory.getInstance();
 		final ConvertorFactory factory2 = ConvertorFactory.getInstance();
 
-		assertEquals(factory1, factory2);
+		assertNotEquals(factory1, factory2);
+	}
+
+	@Test
+	public void test_manipulation_method() {
+		final ConvertorFactory factory = ConvertorFactory.getInstance();
+
+		// ------------------------------------------------------
+		// addConvertor
+		Stream.of(
+				Tuple.make(null, null),
+				Tuple.make(String.class, null),
+				Tuple.make(null, UpperConvertor.class)
+				)
+		.forEach(tuple -> {
+			try {
+				factory.addConvertor(tuple.get(0),tuple.get(1));
+				fail();
+			}catch(final NullPointerException e) {
+				// success
+			}
+		});
+		factory.addConvertor(String.class, UpperConvertor.class);
+
+		// ------------------------------------------------------
+		// removeConvertor
+		factory.removeConvertor(StringHolder.class);	// 未登録のクラス
+		factory.removeConvertor(String.class);			// 登録済みのクラス
+
+		// ------------------------------------------------------
+		// removeAllConvertor
+		factory.removeAllConvertor();
+
+		// ------------------------------------------------------
+		// containsBaseClass
+		assertFalse(factory.containsBaseClass(String.class));
+
+		factory.addConvertor(String.class, UpperConvertor.class);
+		assertTrue(factory.containsBaseClass(String.class));
+
+		// ------------------------------------------------------
+		// containsConvertor
+		factory.containsConvertor(UpperConvertor.class);
+		;
 	}
 
 
@@ -85,23 +150,6 @@ public class ConvertorFactoryTest {
 		});
 	}
 
-
-	public static class UpperConvertor extends Convertor {
-
-		List<String> strList;
-
-		public UpperConvertor(final Class<?> clazz, final LyceeArg lyceeArg) {
-			super(String.class);
-			strList = new ArrayList<>();
-		}
-
-		@Override
-		public Object convert(final String str) {
-			return str;
-		}
-
-	}
-
 	@Test
 	public void test_custom_convertor() {
 		final ConvertorFactory factory = ConvertorFactory.getInstance();
@@ -115,31 +163,17 @@ public class ConvertorFactoryTest {
 
 	}
 
-	@Test
-	public void check_constructor() {
-		Stream.of(TestClassSimpleCase.class.getDeclaredFields())
-		.peek(f -> f.setAccessible(true))
-		.forEach(field -> {
-			printVarArgs(field.getName(), field.getType(), field.getDeclaredAnnotation(LyceeArg.class));
+	@Test(expected=LyceeRuntimeException.class)
+	public void test_custom_convertor_no_constructor() {
+		final ConvertorFactory factory = ConvertorFactory.getInstance();
+		factory.addConvertor(String.class, LowerConvertor.class);
+		Stream.of(
+				new TestClassCreateConvertor(LowerConvertor.class, "argStr")
+				)
+		.forEach(testClass -> {
+			testClass.test(TestClassSimpleCase.class, factory);
 		});
-	}
 
-
-	private void printVarArgs(final String name, final Object ...args) {
-		System.out.println(name + " : " +
-				Stream.of(args)
-		.peek(arg -> {
-			if(arg instanceof Proxy) {
-				System.out.println("* * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
-				System.out.println(arg + " is Proxy class.");
-				System.out.println("Proxy.getInvocationHandler(arg).getClass() : "+ Proxy.getInvocationHandler(arg).getClass());
-				System.out.println("((Proxy)arg).getClass() : "+ ((Proxy)arg).getClass());
-				System.out.println("* * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
-			}
-		})
-		.map(arg -> arg!=null ? arg.getClass().toString() :"null")
-		.collect(Collectors.joining(","))
-				);
 	}
 
 }
