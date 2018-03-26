@@ -1,5 +1,7 @@
 package net.coolblossom.lycee.core.args.testutil;
 
+import java.util.Date;
+
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
 
 /**
@@ -27,5 +29,7 @@ public class TestClassTypeAnnotation {
 	protected char argChar;
 
 	protected Double argDouble;
+
+	protected Date argDate;
 
 }
