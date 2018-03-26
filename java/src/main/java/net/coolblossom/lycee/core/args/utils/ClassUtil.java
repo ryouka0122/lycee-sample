@@ -42,7 +42,7 @@ public final class ClassUtil {
 		Constructor<T> ctor = null;
 		try {
 			Class<?>[] ctorArgs = null;
-			if(args!=null && args.length>0) {
+			if(args!=null) {
 				ctorArgs = Stream.of(args)
 						.map(arg -> arg.getClass())
 						.toArray(Class<?>[]::new);
