@@ -180,7 +180,7 @@ public class ConvertorFactory {
 	private Convertor newConvertor(
 			@Nonnull final Class<? extends Convertor> convertor,
 			@Nonnull final Class<?> clazz,
-			@nullable final LyceeArg lyceeArg) {
+			@Nullable final LyceeArg lyceeArg) {
 		try {
 			final Constructor ctor = convertor.getDeclaredConstructor(Class.class, LyceeArg.class);
 			final Convertor result = (Convertor) ctor.newInstance(clazz, lyceeArg);
