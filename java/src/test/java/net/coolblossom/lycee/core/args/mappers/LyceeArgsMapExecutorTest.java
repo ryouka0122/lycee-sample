@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.coolblossom.lycee.core.TestClassHelper;
+import net.coolblossom.lycee.core.args.LyceeArgs;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.TestClassAnnotation;
 import net.coolblossom.lycee.core.args.testutil.TestClassModifier;
@@ -27,7 +28,7 @@ public class LyceeArgsMapExecutorTest {
 	public void test_args_normal() {
 		final String[] args = { "--argInt", "1", "--argStr", "AAA" };
 
-		final TestClassSimpleCase test = LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+		final TestClassSimpleCase test = LyceeArgs.createAndMap(TestClassSimpleCase.class, args).execute();
 
 		assertEquals(1, TestClassHelper.getIntField(test, "argInt"));
 		assertEquals("AAA", TestClassHelper.getFieldValue(test, "argStr"));
@@ -46,7 +47,7 @@ public class LyceeArgsMapExecutorTest {
 		}
 
 		public void test() {
-			final TestClassSimpleCase test = LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+			final TestClassSimpleCase test = LyceeArgs.createAndMap(TestClassSimpleCase.class, args).execute();
 
 			expectedInt.invoke(TestClassHelper.getFieldValue(test, "argInt"));
 			expectedStr.invoke(TestClassHelper.getFieldValue(test, "argStr"));
@@ -78,7 +79,7 @@ public class LyceeArgsMapExecutorTest {
 				)
 		.forEach(args -> {
 			try {
-				LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+				LyceeArgs.createAndMap(TestClassSimpleCase.class, args).execute();
 				fail();
 			}catch(final LyceeRuntimeException e) {
 				// success
@@ -98,7 +99,7 @@ public class LyceeArgsMapExecutorTest {
 				)
 		.forEach(args -> {
 			try {
-				LyceeArgsMapper.createAndMap(TestClassSimpleCase.class, args).execute();
+				LyceeArgs.createAndMap(TestClassSimpleCase.class, args).execute();
 				fail();
 			}catch(final IllegalArgumentException e) {
 				// success
@@ -162,7 +163,7 @@ public class LyceeArgsMapExecutorTest {
 				,new TestCaseConfiguratedAnnotation("argStr9", isNull()    , "--param"  , "9")
 				)
 		.forEach(test -> {
-			final TestClassAnnotation actual = LyceeArgsMapper.createAndMap(TestClassAnnotation.class, test.args).execute();
+			final TestClassAnnotation actual = LyceeArgs.createAndMap(TestClassAnnotation.class, test.args).execute();
 
 			test.expected.invoke(TestClassHelper.getFieldValue(actual, test.field));
 		});
@@ -183,7 +184,7 @@ public class LyceeArgsMapExecutorTest {
 				"--argStr9", "I",
 		};
 
-		final TestClassAnnotation actual = LyceeArgsMapper.createAndMap(TestClassAnnotation.class, args).execute();
+		final TestClassAnnotation actual = LyceeArgs.createAndMap(TestClassAnnotation.class, args).execute();
 
 		Stream.of(
 				Tuple.make("argStr1", isValue("A"))
@@ -212,7 +213,7 @@ public class LyceeArgsMapExecutorTest {
 				"--argDouble", "0.001",
 		};
 
-		final TestClassTypeAnnotation actual = LyceeArgsMapper.createAndMap(
+		final TestClassTypeAnnotation actual = LyceeArgs.createAndMap(
 				TestClassTypeAnnotation.class, args).execute();
 		Stream.of(
 				Tuple.make("argInt", isValue(1))
@@ -233,7 +234,7 @@ public class LyceeArgsMapExecutorTest {
 				"--arg1", "1",
 				"--arg2", "2",
 		};
-		final TestClassNoAnnotation actual = LyceeArgsMapper.createAndMap(TestClassNoAnnotation.class, args).execute();
+		final TestClassNoAnnotation actual = LyceeArgs.createAndMap(TestClassNoAnnotation.class, args).execute();
 
 		Stream.of(
 				Tuple.make("arg1", isValue(100))
@@ -254,7 +255,7 @@ public class LyceeArgsMapExecutorTest {
 		.forEach(tuple-> {
 			final String name = tuple.get(1);
 			final String[] args = { "--" + name, "1" };
-			final Object actual = LyceeArgsMapper.createAndMap(tuple.get(0), args).execute();
+			final Object actual = LyceeArgs.createAndMap(tuple.get(0), args).execute();
 			assertEquals(0, TestClassHelper.getIntField(actual, name));
 		});
 	}
@@ -272,7 +273,7 @@ public class LyceeArgsMapExecutorTest {
 		.forEach(tuple-> {
 			final String name = tuple.get(1);
 			final String[] args = { "--" + name, "1" };
-			final Object actual = LyceeArgsMapper.createAndMap(tuple.get(0), args).execute();
+			final Object actual = LyceeArgs.createAndMap(tuple.get(0), args).execute();
 			assertNotEquals(1, TestClassHelper.getIntField(actual, name));
 		});
 	}

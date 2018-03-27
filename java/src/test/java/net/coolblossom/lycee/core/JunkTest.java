@@ -7,10 +7,10 @@ import java.lang.reflect.Field;
 
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.LyceeArgs;
 import net.coolblossom.lycee.core.args.descriptors.MapDescriptor;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
-import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
 import net.coolblossom.lycee.core.args.testutil.TestClassMapCase;
 
 /**
@@ -26,7 +26,7 @@ public class JunkTest {
 	@Test
 	public void test_public_constructor() {
 		// for LyceeArgsMapper#LyceeArgsMapper()
-		new LyceeArgsMapper();
+		new LyceeArgs();
 	}
 
 	@Test(expected=LyceeRuntimeException.class)
