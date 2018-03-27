@@ -9,9 +9,9 @@ import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
 
+import net.coolblossom.lycee.core.args.ConvertorFactory;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.convertors.Convertor;
-import net.coolblossom.lycee.core.args.convertors.ConvertorFactory;
 import net.coolblossom.lycee.core.args.descriptors.ArrayDescriptor;
 import net.coolblossom.lycee.core.args.descriptors.CollectionDescriptor;
 import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;

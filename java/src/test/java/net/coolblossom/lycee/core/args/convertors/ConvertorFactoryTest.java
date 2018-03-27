@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import net.coolblossom.lycee.core.args.ConvertorFactory;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.StringHolder;
