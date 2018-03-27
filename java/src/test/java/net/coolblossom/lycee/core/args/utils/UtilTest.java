@@ -25,7 +25,6 @@ public class UtilTest {
 	public static Class<?>[] TEST_CLASSES = {
 			ClassUtil.class,
 			LyceeArgsUtil.class,
-			ObjectUtil.class,
 			StringUtil.class,
 	};
 
