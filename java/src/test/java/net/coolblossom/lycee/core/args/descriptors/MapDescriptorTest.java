@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.coolblossom.lycee.core.TestClassHelper;
-import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
+import net.coolblossom.lycee.core.args.LyceeArgs;
 import net.coolblossom.lycee.core.args.testutil.TestClassMapCase;
 
 public class MapDescriptorTest {
@@ -38,7 +38,7 @@ public class MapDescriptorTest {
 		Stream.of(PARAMS)
 		.forEach(testData -> {
 			try {
-				final TestClassMapCase testClass = LyceeArgsMapper.createAndMap(TestClassMapCase.class, testData.args).execute();
+				final TestClassMapCase testClass = LyceeArgs.createAndMap(TestClassMapCase.class, testData.args).execute();
 
 				final Map actual = TestClassHelper.getFieldValue(testClass, "argStrMap");
 				assertNotNull(actual);

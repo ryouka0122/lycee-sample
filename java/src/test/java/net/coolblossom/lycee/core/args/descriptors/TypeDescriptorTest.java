@@ -14,7 +14,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import net.coolblossom.lycee.core.args.mappers.LyceeArgsMapper;
+import net.coolblossom.lycee.core.args.LyceeArgs;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
 
 @RunWith(Theories.class)
@@ -75,7 +75,7 @@ public class TypeDescriptorTest {
 		System.out.println("TEST CASE["+testCount++ +"]" +
 				Stream.of(testCase.args).collect(Collectors.joining(",")));
 
-		final TestClassSimpleCase result = LyceeArgsMapper
+		final TestClassSimpleCase result = LyceeArgs
 				.createAndMap(TestClassSimpleCase.class, testCase.args)
 				.execute();
 

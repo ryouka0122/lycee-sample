@@ -17,7 +17,7 @@ public class WrapperConvertor extends Convertor {
 	@Nonnull
 	private final Function<String, Object> parser;
 
-	protected WrapperConvertor(@Nonnull final Class<?> typeClass, @Nonnull final Function<String, Object> parser) {
+	public WrapperConvertor(@Nonnull final Class<?> typeClass, @Nonnull final Function<String, Object> parser) {
 		super(typeClass);
 		this.parser = parser;
 	}

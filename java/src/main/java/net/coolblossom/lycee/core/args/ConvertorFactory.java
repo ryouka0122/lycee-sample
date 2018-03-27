@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.convertors;
+package net.coolblossom.lycee.core.args;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +11,14 @@ import javax.annotation.Nullable;
 import org.apache.log4j.Logger;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
+import net.coolblossom.lycee.core.args.convertors.Convertor;
+import net.coolblossom.lycee.core.args.convertors.DateConvertor;
+import net.coolblossom.lycee.core.args.convertors.DefaultConvertor;
+import net.coolblossom.lycee.core.args.convertors.EnumConvertor;
+import net.coolblossom.lycee.core.args.convertors.LyceeCodeEnumConvertor;
+import net.coolblossom.lycee.core.args.convertors.PrimitiveConvertor;
+import net.coolblossom.lycee.core.args.convertors.StringConvertor;
+import net.coolblossom.lycee.core.args.convertors.WrapperConvertor;
 import net.coolblossom.lycee.core.args.enums.LyceeCodeEnum;
 import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
@@ -168,10 +176,18 @@ public class ConvertorFactory {
 	 * @param lyceeArg 変換処理クラスのコンストラクタで使用する第2引数
 	 * @return 変換処理クラスのインスタンス
 	 */
-	private Convertor newConvertor(final Class<? extends Convertor> convertor, final Class<?> clazz, final LyceeArg lyceeArg) {
+	@Nonnull
+	private Convertor newConvertor(
+			@Nonnull final Class<? extends Convertor> convertor,
+			@Nonnull final Class<?> clazz,
+			@Nullable final LyceeArg lyceeArg) {
 		try {
 			final Constructor ctor = convertor.getDeclaredConstructor(Class.class, LyceeArg.class);
-			return (Convertor) ctor.newInstance(clazz, lyceeArg);
+			final Convertor result = (Convertor) ctor.newInstance(clazz, lyceeArg);
+			if(result == null) {
+				throw new InstantiationException();
+			}
+			return result;
 		}catch(final NoSuchMethodException e) {
 			throw new LyceeRuntimeException("該当するコンストラクタがありませんでした", e);
 		} catch (final SecurityException e) {
