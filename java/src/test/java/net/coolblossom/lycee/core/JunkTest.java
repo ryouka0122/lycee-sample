@@ -32,7 +32,7 @@ public class JunkTest {
 	@Test(expected=LyceeRuntimeException.class)
 	public void test_MapDescriptor() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		final TestClassMapCase testClass = new TestClassMapCase();
-		final Field field = TestClassMapCase.class.getDeclaredField("argStrMap");
+		final Field field = TestClassMapCase.SingleMapCase.class.getDeclaredField("argStrMap");
 		field.setAccessible(true);
 		final MapDescriptor desc = new MapDescriptor(field, String.class);
 		assertTrue(desc.matches(""));

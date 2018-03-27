@@ -18,9 +18,14 @@ public class TestClassMapCase {
 	// ------------------------------------------------------------
 	// Map型
 	//
-	/** Map型 / 対応Descriptor：MapDescriptor / 対応Convertor：StringConvertor */
-	@LyceeArg
-	@LyceeArgCollection(HashMap.class)
-	protected Map<String, String> argStrMap;
+	public static class SingleMapCase {
+		/** Map型 / 対応Descriptor：MapDescriptor / 対応Convertor：StringConvertor */
+		@LyceeArg
+		@LyceeArgCollection(HashMap.class)
+		protected Map<String, String> argStrMap;
+	}
+
+
+
 
 }

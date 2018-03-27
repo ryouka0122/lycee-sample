@@ -126,7 +126,7 @@ public class ClassUtilTest {
 				//  TestCase_getActualTypeArguments(testclass, fieldname, check type ...)
 				new TestCase_getActualTypeArguments(TestClass.class, "clsArg" ,   StringHolder.class),
 				new TestCase_getActualTypeArguments(TestClass.class, "clsList",   StringHolder.class),
-				new TestCase_getActualTypeArguments(TestClassMapCase.class, "argStrMap" ,  String.class, String.class)
+				new TestCase_getActualTypeArguments(TestClassMapCase.SingleMapCase.class, "argStrMap" ,  String.class, String.class)
 				)
 		.forEach(testCase -> {
 			try {
