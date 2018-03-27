@@ -176,10 +176,18 @@ public class ConvertorFactory {
 	 * @param lyceeArg 変換処理クラスのコンストラクタで使用する第2引数
 	 * @return 変換処理クラスのインスタンス
 	 */
-	private Convertor newConvertor(final Class<? extends Convertor> convertor, final Class<?> clazz, final LyceeArg lyceeArg) {
+	@Nonnull
+	private Convertor newConvertor(
+			@Nonnull final Class<? extends Convertor> convertor,
+			@Nonnull final Class<?> clazz,
+			@nullable final LyceeArg lyceeArg) {
 		try {
 			final Constructor ctor = convertor.getDeclaredConstructor(Class.class, LyceeArg.class);
-			return (Convertor) ctor.newInstance(clazz, lyceeArg);
+			final Convertor result = (Convertor) ctor.newInstance(clazz, lyceeArg);
+			if(result == null) {
+				throw new InstantiationException();
+			}
+			return result;
 		}catch(final NoSuchMethodException e) {
 			throw new LyceeRuntimeException("該当するコンストラクタがありませんでした", e);
 		} catch (final SecurityException e) {
