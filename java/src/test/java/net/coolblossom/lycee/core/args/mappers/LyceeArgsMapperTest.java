@@ -21,7 +21,7 @@ import net.coolblossom.lycee.core.args.testutil.TestClassTypeAnnotation;
 import net.coolblossom.lycee.core.commons.collect.Tuple;
 import net.coolblossom.lycee.core.evals.Evaluator;
 
-public class LyceeArgsMapExecutorTest {
+public class LyceeArgsMapperTest {
 
 
 	@Test

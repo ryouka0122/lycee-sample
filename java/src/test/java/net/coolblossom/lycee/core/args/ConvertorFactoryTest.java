@@ -1,4 +1,4 @@
-package net.coolblossom.lycee.core.args.convertors;
+package net.coolblossom.lycee.core.args;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,6 +13,14 @@ import org.junit.Test;
 
 import net.coolblossom.lycee.core.args.ConvertorFactory;
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
+import net.coolblossom.lycee.core.args.convertors.Convertor;
+import net.coolblossom.lycee.core.args.convertors.DateConvertor;
+import net.coolblossom.lycee.core.args.convertors.DefaultConvertor;
+import net.coolblossom.lycee.core.args.convertors.EnumConvertor;
+import net.coolblossom.lycee.core.args.convertors.LyceeCodeEnumConvertor;
+import net.coolblossom.lycee.core.args.convertors.PrimitiveConvertor;
+import net.coolblossom.lycee.core.args.convertors.StringConvertor;
+import net.coolblossom.lycee.core.args.convertors.WrapperConvertor;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.StringHolder;
 import net.coolblossom.lycee.core.args.testutil.TestClassSimpleCase;
