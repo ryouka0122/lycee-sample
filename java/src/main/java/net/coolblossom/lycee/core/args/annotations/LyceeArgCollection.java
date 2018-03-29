@@ -17,6 +17,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Deprecated
 public @interface LyceeArgCollection {
 	/** 紐づけ時に使用したいクラス */
 	Class<?> value() default Object.class;

@@ -21,6 +21,9 @@ import net.coolblossom.lycee.core.args.enums.LyceeDateFormat;
 @Documented
 public @interface LyceeArg {
 
+	/** 実クラス（フィールドの型を実装クラス以外を使用したいときに利用） */
+	Class<?> value() default Object.class;
+
 	/** 明示的に紐づけしたい場合に使用（指定した場合、こちらの名称で紐づけ処理が行われる） */
 	String name() default "";
 
@@ -30,5 +33,9 @@ public @interface LyceeArg {
 
 	/** 短縮名やエイリアス使用時に指定 */
 	String alias() default "";
+
+	/** [未対応] デフォルト指定項目 */
+	@Deprecated
+	boolean isDefault() default false;
 
 }
