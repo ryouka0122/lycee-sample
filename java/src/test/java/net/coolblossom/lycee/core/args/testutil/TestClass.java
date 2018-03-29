@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.coolblossom.lycee.core.args.annotations.LyceeArg;
 import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
-import net.coolblossom.lycee.core.args.annotations.LyceeArgCollection;
 
 @LyceeArgClass
 public class TestClass {
@@ -16,21 +16,21 @@ public class TestClass {
 	public String strArg;
 	public long longArg;
 
-	@LyceeArgCollection(ArrayList.class)
+	@LyceeArg(ArrayList.class)
 	public List<String> strList;
-	@LyceeArgCollection(ArrayList.class)
+	@LyceeArg(ArrayList.class)
 	public List<Integer> intList;
 
-	@LyceeArgCollection(HashSet.class)
+	@LyceeArg(HashSet.class)
 	public Set<String> strSet;
-	@LyceeArgCollection(HashSet.class)
+	@LyceeArg(HashSet.class)
 	public Set<Integer> intSet;
-	@LyceeArgCollection(HashSet.class)
+	@LyceeArg(HashSet.class)
 	public Set<Character> charSet;
 
-	@LyceeArgCollection(LinkedHashMap.class)
+	@LyceeArg(LinkedHashMap.class)
 	public Map<String, String> strMap;
-	@LyceeArgCollection(LinkedHashMap.class)
+	@LyceeArg(LinkedHashMap.class)
 	public Map<String, Integer> intMap;
 
 	public String[] strAry;
@@ -38,7 +38,7 @@ public class TestClass {
 	public StringHolder clsArg;
 	public StringHolder[] clsAry;
 
-	@LyceeArgCollection(ArrayList.class)
+	@LyceeArg(ArrayList.class)
 	public List<StringHolder> clsList;
 
 	public TestClass() {

@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
-import net.coolblossom.lycee.core.args.convertors.Convertor;
-import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 import net.coolblossom.lycee.core.args.utils.StringUtil;
 
 /**
@@ -25,10 +23,6 @@ public abstract class FieldDescriptor {
 	@Nonnull
 	protected Field field;
 
-	/** マッピングする際の変換処理クラス */
-	@Nonnull
-	protected Convertor convertor;
-
 	/** マッピング用名称リスト（ここにある名前と同じ場合マッピングされる） */
 	@Nonnull
 	protected Set<String> matchingNameSet;
@@ -38,9 +32,8 @@ public abstract class FieldDescriptor {
 	 * @param field マッピング対象フィールド
 	 * @param type フィールドの型クラス（配列の場合配列となっているクラス、ジェネリック型の場合、型パラメータとなっている実クラスの型）
 	 */
-	protected FieldDescriptor(@Nonnull final Field field, @Nonnull final Class<?> type) {
+	protected FieldDescriptor(@Nonnull final Field field) {
 		this.field = verifyField(field);
-		convertor = LyceeArgsUtil.createConvertor(type, field.getDeclaredAnnotation(LyceeArg.class));
 		matchingNameSet = makeNameSet();
 	}
 

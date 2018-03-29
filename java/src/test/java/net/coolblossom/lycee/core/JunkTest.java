@@ -34,7 +34,7 @@ public class JunkTest {
 		final TestClassMapCase testClass = new TestClassMapCase();
 		final Field field = TestClassMapCase.SingleMapCase.class.getDeclaredField("argStrMap");
 		field.setAccessible(true);
-		final MapDescriptor desc = new MapDescriptor(field, String.class);
+		final MapDescriptor desc = new MapDescriptor(field);
 		assertTrue(desc.matches(""));
 		assertTrue(desc.matches("A"));
 		assertTrue(desc.matches("1"));

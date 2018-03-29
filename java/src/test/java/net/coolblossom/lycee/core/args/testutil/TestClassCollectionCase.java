@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.coolblossom.lycee.core.args.annotations.LyceeArg;
-import net.coolblossom.lycee.core.args.annotations.LyceeArgCollection;
 
 /**
  * <b>配列/Collection/Mapのテストパターンを含むテスト用クラス</b>
@@ -48,8 +47,7 @@ public class TestClassCollectionCase {
 	// Collection型
 	//
 	/** List型 / 対応Descriptor：CollectionDescriptor / 対応Convertor：EnumConvertor */
-	@LyceeArg
-	@LyceeArgCollection(ArrayList.class)
+	@LyceeArg(ArrayList.class)
 	protected List<TestEnum> argEnumList;
 
 	/** List型（LyceeArgCollection指定なし） / 対応Descriptor：CollectionDescriptor / 対応Convertor：StringConvertor */
@@ -57,8 +55,7 @@ public class TestClassCollectionCase {
 	protected ArrayList<String> argStrList;
 
 	/** Set型 / 対応Descriptor：CollectionDescriptor / 対応Convertor：StringConvertor */
-	@LyceeArg
-	@LyceeArgCollection(HashSet.class)
+	@LyceeArg(HashSet.class)
 	protected Set<String> argStrSet;
 
 

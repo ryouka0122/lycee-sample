@@ -7,35 +7,51 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
+import net.coolblossom.lycee.core.args.ConvertorFactory;
+import net.coolblossom.lycee.core.args.annotations.LyceeArg;
+import net.coolblossom.lycee.core.args.convertors.Convertor;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
+import net.coolblossom.lycee.core.args.utils.ClassUtil;
 import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**
  * <b>マップ用記述子</b>
  * <p>
- * 他の記述子とは違い、名称一致の処理は無視されます。<br>
- * また、変換には同じものを使用するため、String型を使用することをお勧めします。<br>
- * <br>
- * MapをLyceeArgsで使用するには、以下の条件が存在します。<br>
- * <li>LyceeArgCollectionが付与されていること</li>
- * 次の条件のいずれかは該当すること
- * <li>他フィールドが存在しない</li>
- * <li>デフォルト設定になっていること</li>
  * </p>
  * @author ryouka
  *
  */
-public class MapDescriptor extends CollectableDescriptor {
+public class MapDescriptor extends FieldDescriptor {
 	private static final Logger logger = Logger.getLogger(MapDescriptor.class);
 
+	/** キーに対する変換器 */
+	@Nonnull
+	private final Convertor keyConvertor;
+
+	/** 値に対する変換器 */
+	@Nonnull
+	private final Convertor valueConvertor;
+
+	/**  */
+	@Nonnull
+	private final Class<?> actualContainerType;
 
 	/**
 	 * コンストラクタ
 	 * @param field 対象フィールド
 	 * @param actualType Map型の2つ目の型パラメータの型クラス
 	 */
-	public MapDescriptor(@Nonnull final Field field, @Nonnull final Class<?> actualType) {
-		super(field, actualType);
+	public MapDescriptor(@Nonnull final Field field) {
+		super(field);
+
+		final Class<?> actualTypes[] = ClassUtil.getActualTypeArguments(field);
+		if(actualTypes.length!=2) {
+			throw new LyceeRuntimeException("実際の型の数が異なります。[想定=2 / 実際="+actualTypes.length+"]");
+		}
+		final ConvertorFactory factory = ConvertorFactory.getInstance();
+		actualContainerType = LyceeArgsUtil.getActualFieldType(field);
+		keyConvertor = factory.createConvertor(actualTypes[0], null);
+		valueConvertor = factory.createConvertor(actualTypes[1], field.getDeclaredAnnotation(LyceeArg.class));
 	}
 
 	@Override
@@ -54,8 +70,8 @@ public class MapDescriptor extends CollectableDescriptor {
 	public boolean set(@Nonnull final Object obj, @Nonnull final String key, @Nonnull final String value)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("key=" + key + " / value="+ value);
-		final Map map = (Map) getFieldObject(obj);
-		map.put(key, convertor.convert(value));
+		final Map map = (Map) LyceeArgsUtil.getFieldObject(field, obj, actualContainerType);
+		map.put(keyConvertor.convert(key), valueConvertor.convert(value));
 		field.set(obj, map);
 		return true;
 	}
