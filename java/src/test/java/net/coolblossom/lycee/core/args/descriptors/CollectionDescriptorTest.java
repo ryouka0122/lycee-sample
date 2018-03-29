@@ -36,7 +36,7 @@ public class CollectionDescriptorTest {
 		System.out.println("field:"+field.getName());			// field:strAry
 		System.out.println("componentType:" + componentType);	// componentType:class java.lang.String
 
-		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
+		final CollectionDescriptor desc = new CollectionDescriptor(field);
 		for(final String data : testData) {
 			desc.set(testClass, fieldName, data);
 		}
@@ -66,7 +66,7 @@ public class CollectionDescriptorTest {
 		System.out.println("field:"+field.getName());			// field:strAry
 		System.out.println("componentType:" + componentType);	// componentType:class java.lang.String
 
-		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
+		final CollectionDescriptor desc = new CollectionDescriptor(field);
 		for(final String data : testData) {
 			desc.set(testClass, fieldName, data);
 		}
@@ -99,7 +99,7 @@ public class CollectionDescriptorTest {
 		System.out.println("field:"+field.getName());			// field:strAry
 		System.out.println("componentType:" + componentType);	// componentType:class java.lang.String
 
-		final CollectionDescriptor desc = new CollectionDescriptor(field, componentType);
+		final CollectionDescriptor desc = new CollectionDescriptor(field);
 		for(final String data : testData) {
 			desc.set(testClass, fieldName, data);
 		}
@@ -119,8 +119,7 @@ public class CollectionDescriptorTest {
 	@Test(expected=LyceeRuntimeException.class)
 	public void test_no_annotation() throws ReflectiveOperationException {
 		new CollectionDescriptor(
-				TestClassNoAnnotation.class.getDeclaredField("argList"),
-				String.class);
+				TestClassNoAnnotation.class.getDeclaredField("argList"));
 	}
 
 

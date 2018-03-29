@@ -44,11 +44,11 @@ public class LyceeArgsUtilTest {
 	@Test
 	public void test_createDescriptor() {
 		Stream.of(
-				new TestPattern_createDescriptor(TypeDescriptor.class, TestClassSimpleCase.class, "argInt")
-				, new TestPattern_createDescriptor(TypeDescriptor.class, TestClassSimpleCase.class, "argStr")
-				, new TestPattern_createDescriptor(CollectionDescriptor.class, TestClassCollectionCase.class, "argEnumList")
-				, new TestPattern_createDescriptor(ArrayDescriptor.class, TestClassCollectionCase.class, "argIntArray")
-				, new TestPattern_createDescriptor(MapDescriptor.class, TestClassMapCase.class, "argStrMap")
+				new TestPattern_createDescriptor(TypeDescriptor.class        , TestClassSimpleCase.class           , "argInt")
+				, new TestPattern_createDescriptor(TypeDescriptor.class      , TestClassSimpleCase.class           , "argStr")
+				, new TestPattern_createDescriptor(CollectionDescriptor.class, TestClassCollectionCase.class       , "argEnumList")
+				, new TestPattern_createDescriptor(ArrayDescriptor.class     , TestClassCollectionCase.class       , "argIntArray")
+				, new TestPattern_createDescriptor(MapDescriptor.class       , TestClassMapCase.SingleMapCase.class, "argStrMap")
 				)
 		.forEach(testCase -> {
 			try {
@@ -101,13 +101,13 @@ public class LyceeArgsUtilTest {
 	@Test
 	public void test_verifyField_normal() {
 		Stream.of(
-				Tuple.make(TestClassSimpleCase.class    , "argInt"     , int.class       ),
-				Tuple.make(TestClassSimpleCase.class    , "argStr"     , String.class    ),
-				Tuple.make(TestClassCollectionCase.class, "argIntArray", int[].class     ),
-				Tuple.make(TestClassCollectionCase.class, "argStrArray", String[].class  ),
-				Tuple.make(TestClassCollectionCase.class, "argStrList" , Collection.class),
-				Tuple.make(TestClassCollectionCase.class, "argStrSet"  , Collection.class),
-				Tuple.make(TestClassMapCase.class       , "argStrMap"  , Map.class       )
+				Tuple.make(TestClassSimpleCase.class           , "argInt"     , int.class       ),
+				Tuple.make(TestClassSimpleCase.class           , "argStr"     , String.class    ),
+				Tuple.make(TestClassCollectionCase.class       , "argIntArray", int[].class     ),
+				Tuple.make(TestClassCollectionCase.class       , "argStrArray", String[].class  ),
+				Tuple.make(TestClassCollectionCase.class       , "argStrList" , Collection.class),
+				Tuple.make(TestClassCollectionCase.class       , "argStrSet"  , Collection.class),
+				Tuple.make(TestClassMapCase.SingleMapCase.class, "argStrMap"  , Map.class       )
 				)
 		.forEach(tuple -> {
 			try {

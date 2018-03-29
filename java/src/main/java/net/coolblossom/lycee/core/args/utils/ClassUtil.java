@@ -95,6 +95,19 @@ public final class ClassUtil {
 	}
 
 	/**
+	 * <b>実装クラスか確認するメソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param clazz
+	 * @return
+	 */
+	public static boolean isImplementationClass(@Nonnull final Class<?> clazz) {
+		return !(clazz.isInterface()
+				|| Modifier.isAbstract(clazz.getModifiers()));
+	}
+
+	/**
 	 * <b>継承元クラスのリストを取得するメソッド</b>
 	 * <p>
 	 * 指定された型クラスの親クラスとインタフェイスのリストを列挙したListを返します。<br>
@@ -142,16 +155,4 @@ public final class ClassUtil {
 				.toArray(Class<?>[]::new);
 	}
 
-	/**
-	 * <b>実装クラスか確認するメソッド</b>
-	 * <p>
-	 * </p>
-	 *
-	 * @param clazz
-	 * @return
-	 */
-	public static boolean isImplementationClass(@Nonnull final Class<?> clazz) {
-		return !(clazz.isInterface()
-				|| Modifier.isAbstract(clazz.getModifiers()));
-	}
 }

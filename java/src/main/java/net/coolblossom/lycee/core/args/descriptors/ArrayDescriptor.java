@@ -14,7 +14,16 @@ import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
  * @author ryouka
  *
  */
-public class ArrayDescriptor extends FieldDescriptor {
+public class ArrayDescriptor extends TypeDescriptor {
+
+	/**
+	 * コンストラクタ
+	 * @param field
+	 * @param componentType
+	 */
+	public ArrayDescriptor(@Nonnull final Field field) {
+		this(field, field.getType().getComponentType());
+	}
 
 	/**
 	 * コンストラクタ

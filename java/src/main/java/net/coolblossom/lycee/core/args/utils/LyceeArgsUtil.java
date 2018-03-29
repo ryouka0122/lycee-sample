@@ -52,10 +52,10 @@ public final class LyceeArgsUtil {
 			return new ArrayDescriptor(field, fieldType.getComponentType());
 		}else if (ClassUtil.isParent(fieldType, Collection.class)) {
 			// Collection型の時
-			return new CollectionDescriptor(field, ClassUtil.getActualTypeArguments(field)[0]);
+			return new CollectionDescriptor(field);
 		}else if (ClassUtil.isParent(fieldType, Map.class)) {
 			// Map型の時
-			return new MapDescriptor(field, ClassUtil.getActualTypeArguments(field)[1]);
+			return new MapDescriptor(field);
 		}else {
 			// それ以外（通常のフィールドと認識された）
 			return new TypeDescriptor(field, fieldType);
@@ -88,19 +88,43 @@ public final class LyceeArgsUtil {
 	 */
 	public static void verifyClassAndInheritance(@Nullable final Class<?> containerType, @Nonnull final Class<?> fieldType) {
 		if(containerType==null || containerType.equals(Object.class)) {
-			throw new LyceeRuntimeException("LyceeArgCollection#containerにインスタンス生成時の型を指定してください");
+			throw new LyceeRuntimeException("LyceeArg#valueにインスタンス生成時の型を指定してください");
 		}
 		if(!ClassUtil.isParent(containerType, fieldType)) {
 			throw new LyceeRuntimeException(
-					String.format("LyceeArgCollection#containerにはフィールドの型と同じか継承した型を指定してください[field=%s / LyceeArgCollection#container=%s]",
+					String.format("LyceeArg#valueにはフィールドの型と同じか継承した型を指定してください[field=%s / LyceeArg#value=%s]",
 							fieldType.getName(), containerType.getName()));
 		}
 		if(!ClassUtil.isImplementationClass(containerType)) {
 			throw new LyceeRuntimeException(
-					String.format("LyceeArgCollection#containerにインタフェイスクラスや抽象クラスを指定することはできません[LyceeArgCollection#container=%s]", containerType.getName()));
+					String.format("LyceeArg#valueにインタフェイスクラスや抽象クラスを指定することはできません[LyceeArg#value=%s]", containerType.getName()));
 		}
 	}
 
+	@Nonnull
+	public static Class<?> getActualFieldType(@Nonnull final Field field) {
+		final Class<?> fieldType = field.getType();
+		if(ClassUtil.isImplementationClass(fieldType)) {
+			return fieldType;
+		}
+		final LyceeArg anno = field.getDeclaredAnnotation(LyceeArg.class);
+		if(anno==null) {
+			throw new LyceeRuntimeException(
+					String.format("fieldにLyceeArgがついてません[field=%s]", field.getName()));
+		}
+		verifyClassAndInheritance(anno.value(), field.getType());
+		return anno.value();
+	}
+
+	/**
+	 * <b>フィールドの型が指定されたクラスを継承しているか検証するメソッド</b>
+	 * <p>
+	 * </p>
+	 *
+	 * @param field 検証対象フィールド
+	 * @param parent 親クラス
+	 * @return 検証対象フィールドの型が親クラスを継承している場合TRUEを返す
+	 */
 	@Nonnull
 	public static Field verifyField(@Nonnull final Field field, @Nonnull final Class<?> parent) {
 		if(!ClassUtil.isParent(field.getType(), parent)) {
@@ -108,6 +132,28 @@ public final class LyceeArgsUtil {
 					String.format("%s型のフィールドではありません[field=%s]", parent.getName(), field.getName()));
 		}
 		return field;
+	}
+
+	/**
+	 * <b>フィールドのインスタンス取得</b>
+	 * <p>
+	 * インスタンスがまだ生成されていない場合は、アノテーションで定義された型でインスタンスを生成する。
+	 * </p>
+	 *
+	 * @param obj 取得したいフィールドを所有するオブジェクト
+	 * @return インスタンス
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	@Nonnull
+	public static Object getFieldObject(final Field field, final Object obj, final Class<?> actualContainerType) throws IllegalArgumentException, IllegalAccessException {
+		final Object target = field.get(obj);
+		if(target!=null) {
+			// フィールドから取得できれば、それを返却する
+			return target;
+		}
+		return ClassUtil.newInstance(actualContainerType);
+
 	}
 
 }

@@ -38,7 +38,7 @@ public class MapDescriptorTest {
 		Stream.of(PARAMS)
 		.forEach(testData -> {
 			try {
-				final TestClassMapCase testClass = LyceeArgs.createAndMap(TestClassMapCase.class, testData.args).execute();
+				final TestClassMapCase.SingleMapCase testClass = LyceeArgs.createAndMap(TestClassMapCase.SingleMapCase.class, testData.args).execute();
 
 				final Map actual = TestClassHelper.getFieldValue(testClass, "argStrMap");
 				assertNotNull(actual);
