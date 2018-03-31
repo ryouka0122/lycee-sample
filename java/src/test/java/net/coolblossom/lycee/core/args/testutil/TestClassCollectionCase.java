@@ -46,11 +46,11 @@ public class TestClassCollectionCase {
 	// ------------------------------------------------------------
 	// Collection型
 	//
-	/** List型 / 対応Descriptor：CollectionDescriptor / 対応Convertor：EnumConvertor */
+	/** List型（型指定あり） / 対応Descriptor：CollectionDescriptor / 対応Convertor：EnumConvertor */
 	@LyceeArg(ArrayList.class)
 	protected List<TestEnum> argEnumList;
 
-	/** List型（LyceeArgCollection指定なし） / 対応Descriptor：CollectionDescriptor / 対応Convertor：StringConvertor */
+	/** List型（型指定なし） / 対応Descriptor：CollectionDescriptor / 対応Convertor：StringConvertor */
 	@LyceeArg
 	protected ArrayList<String> argStrList;
 

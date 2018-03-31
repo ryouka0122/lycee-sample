@@ -46,7 +46,7 @@ public class TestClassMapCase {
 	}
 
 	// ------------------------------------------------------------
-	// HashMap型1つ（LyceeArgCollectionを使わないパターン）
+	// HashMap型1つ（型を指定しないパターン）
 	//
 	public static class HashMapCase {
 		/** Map型 / 対応Descriptor：MapDescriptor / 対応Convertor：DefaultConvertor */
