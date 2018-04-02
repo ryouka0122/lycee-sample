@@ -2,15 +2,15 @@ package net.coolblossom.lycee.core.args.testutil;
 
 import javax.annotation.Nonnull;
 
-public class StringHolder {
-	@Nonnull String value;
-	public StringHolder(@Nonnull final String arg) {
+public class IntegerHolder {
+	@Nonnull Integer value;
+	public IntegerHolder(@Nonnull final Integer arg) {
 		value = arg;
 	}
 
 	@Override
 	public String toString() {
-		return value;
+		return value.toString();
 	}
 
 	@Override
@@ -18,10 +18,10 @@ public class StringHolder {
 		if(this==obj) {
 			return true;
 		}
-		if( !(obj instanceof StringHolder) ) {
+		if( !(obj instanceof IntegerHolder) ) {
 			return false;
 		}
-		final StringHolder holder = (StringHolder)obj;
+		final IntegerHolder holder = (IntegerHolder)obj;
 		return value.equals(holder.value);
 	}
 
@@ -29,5 +29,4 @@ public class StringHolder {
 	public int hashCode() {
 		return value.hashCode();
 	}
-
 }
