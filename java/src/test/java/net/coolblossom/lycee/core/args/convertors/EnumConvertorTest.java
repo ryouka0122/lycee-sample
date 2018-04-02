@@ -4,11 +4,11 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import net.coolblossom.lycee.core.TestClassHelper;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.args.testutil.StringHolder;
 import net.coolblossom.lycee.core.args.testutil.TestEnum;
 import net.coolblossom.lycee.core.evals.Evaluator;
+import net.coolblossom.lycee.core.evals.Evaluators;
 
 public class EnumConvertorTest {
 
@@ -25,7 +25,7 @@ public class EnumConvertorTest {
 		}
 
 		TestCaseEnum isValue(final TestEnum expected) {
-			evaluator = TestClassHelper.isValue(expected);
+			evaluator = Evaluators.isValue(expected);
 			return this;
 		}
 	}

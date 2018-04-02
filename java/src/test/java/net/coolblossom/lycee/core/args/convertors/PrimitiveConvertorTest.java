@@ -5,9 +5,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import net.coolblossom.lycee.core.TestClassHelper;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
 import net.coolblossom.lycee.core.evals.Evaluator;
+import net.coolblossom.lycee.core.evals.Evaluators;
 
 /**
  * <b>PrimitiveConvertorのテストケース</b>
@@ -32,7 +32,7 @@ public class PrimitiveConvertorTest {
 		}
 
 		<T> TestCasePrimitiveConvertor isValue(final T value) {
-			evaluator = TestClassHelper.isValue(value);
+			evaluator = Evaluators.isValue(value);
 			return this;
 		}
 
