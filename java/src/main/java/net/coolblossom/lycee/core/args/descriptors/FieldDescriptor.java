@@ -2,6 +2,7 @@ package net.coolblossom.lycee.core.args.descriptors;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -39,6 +40,28 @@ public abstract class FieldDescriptor {
 
 	@Nonnull
 	abstract protected Field verifyField(@Nonnull Field field);
+
+	/**
+	 * <b>デフォルト指定されているかチェックするメソッド</b>
+	 * <p>
+	 * このメソッドでTRUEを返すとマッピング処理の時に該当しなかった場合必ず呼び出されるようになる.<br>
+	 * 主にMapDescriptorで利用する.
+	 * </p>
+	 *
+	 * @return デフォルト指定されている場合TRUEを返す
+	 */
+	public boolean isDefault() {
+		if( !field.getType().equals(Map.class)) {
+			return false;
+		}
+		final LyceeArg lyceeArg = field.getDeclaredAnnotation(LyceeArg.class);
+		return (lyceeArg!=null && lyceeArg.isDefault());
+	}
+
+	@Nonnull
+	public String getName() {
+		return field.getName();
+	}
 
 
 	/**
