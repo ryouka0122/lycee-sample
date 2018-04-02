@@ -1,23 +1,14 @@
 package net.coolblossom.lycee.core.args.mappers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.log4j.Logger;
 
-import net.coolblossom.lycee.core.args.annotations.LyceeArg;
-import net.coolblossom.lycee.core.args.annotations.LyceeArgClass;
-import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
 import net.coolblossom.lycee.core.args.exceptions.LyceeRuntimeException;
-import net.coolblossom.lycee.core.args.utils.LyceeArgsUtil;
 
 /**
  * <b>LyceeArgsのマッピング処理クラス</b>
@@ -70,12 +61,13 @@ public class LyceeArgsMapper<T> {
 	 * @return マッピングされたインスタンス
 	 */
 	public T execute() {
+		final LyceeArgsProfile profile = new LyceeArgsProfile(target.getClass());
 
-		// マッピング対象フィールドの一覧生成
-		final List<FieldDescriptor> descriptors = createDescriptorList();
-		if(descriptors.isEmpty()) {
+		// マッピング対象フィールドの確認
+		if(profile.isEmpty()) {
 			return target;
 		}
+
 		// マッピングさせるキーのフォーマット
 		final Pattern keyPattern = Pattern.compile(DEFAULT_KEY_FORMAT_STRING);
 		for(int ki=0, vi=1 ; vi<args.length ; ki++, vi++) {
@@ -101,13 +93,10 @@ public class LyceeArgsMapper<T> {
 			}
 
 			try {
-				for(final FieldDescriptor desc : descriptors) {
-					if(desc.set(target, trimmedKey, value)) {
-						logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
-						ki++;
-						vi++;
-						break;
-					}
+				if(profile.set(target, trimmedKey, value)) {
+					logger.info(String.format("map %s(%s)=%s", key, trimmedKey, value));
+					ki++;
+					vi++;
 				}
 			}catch(final IllegalArgumentException | IllegalAccessException e) {
 				throw new LyceeRuntimeException(
@@ -116,45 +105,6 @@ public class LyceeArgsMapper<T> {
 			}
 		}
 		return target;
-	}
-
-	/**
-	 * <b>フィールド記述子のリストを生成するメソッド</b>
-	 * <p>
-	 *  ここで、生成されたリストがマッピング処理の要となる。
-	 * </p>
-	 *
-	 * @return フィールド記述子のリスト
-	 */
-	private List<FieldDescriptor> createDescriptorList() {
-		Stream<Field> fieldStream = Stream
-				.of(target.getClass().getDeclaredFields())
-				.filter(this::checkAccessor);
-
-		if( !target.getClass().isAnnotationPresent(LyceeArgClass.class) ) {
-			fieldStream = fieldStream.filter(f -> f.isAnnotationPresent(LyceeArg.class));
-		}
-
-		return fieldStream
-				.peek(f->f.setAccessible(true))
-				.map(LyceeArgsUtil::createDescriptor)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 *
-	 * <b>マッピングできるフィールドかチェックするメソッド</b>
-	 * <p>
-	 * マッピング可能フィールド：publicかprotectedであること かつ finalが付与されていないこと
-	 * </p>
-	 *
-	 * @param field 検証フィールド
-	 * @return マッピング可能の場合TRUEを返す
-	 */
-	private boolean checkAccessor(@Nonnull final Field field) {
-		final int mod = field.getModifiers();
-		return (Modifier.isPublic(mod) || Modifier.isProtected(mod))
-				&& !Modifier.isFinal(mod);
 	}
 
 }

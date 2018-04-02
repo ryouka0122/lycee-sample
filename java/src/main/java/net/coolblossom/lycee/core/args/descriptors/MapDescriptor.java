@@ -45,9 +45,6 @@ public class MapDescriptor extends FieldDescriptor {
 		super(field);
 
 		final Class<?> actualTypes[] = ClassUtil.getActualTypeArguments(field);
-		if(actualTypes.length!=2) {
-			throw new LyceeRuntimeException("実際の型の数が異なります。[想定=2 / 実際="+actualTypes.length+"]");
-		}
 		final ConvertorFactory factory = ConvertorFactory.getInstance();
 		actualContainerType = LyceeArgsUtil.getActualFieldType(field);
 		keyConvertor = factory.createConvertor(actualTypes[0], null);

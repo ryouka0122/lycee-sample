@@ -1,15 +1,11 @@
 package net.coolblossom.lycee.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
 
 import net.coolblossom.lycee.core.args.descriptors.FieldDescriptor;
 import net.coolblossom.lycee.core.args.utils.ClassUtil;
-import net.coolblossom.lycee.core.evals.Evaluator;
 
 /**
  * <b>テスト用ヘルパ</b>
@@ -81,15 +77,5 @@ public class TestClassHelper {
 			throw new RuntimeException(e);
 		}
 	}
-
-	static public Evaluator isNull() {
-		return (v) -> assertNull(v);
-	}
-
-	static public Evaluator isValue(final Object expected) {
-		return (v) -> assertEquals(expected, v);
-	}
-
-
 
 }

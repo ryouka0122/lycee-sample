@@ -1,7 +1,7 @@
 package net.coolblossom.lycee.core.args.mappers;
 
-import static net.coolblossom.lycee.core.TestClassHelper.isNull;
-import static net.coolblossom.lycee.core.TestClassHelper.isValue;
+import static net.coolblossom.lycee.core.evals.Evaluators.isNull;
+import static net.coolblossom.lycee.core.evals.Evaluators.isValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
